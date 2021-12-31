@@ -4,15 +4,10 @@ import lombok.val;
 import models.User;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.junit.Before;
 import org.junit.Test;
-import xlsx.utils.IOHelper;
+import xlsx.utils.IOHelperTest;
 import xlsx.utils.RandomTestDataGenerator;
-import xlsx.utils.TimeMarker;
-
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.awt.Color.ORANGE;
 import static java.awt.Color.YELLOW;
@@ -33,7 +28,7 @@ public class Examples {
     private static final String DIR_PATH_XLSX_TEST = "C:/Danik/DEVELOPMENT/TM2-dev-excel/xlsx-api-test";
     
     private final RandomTestDataGenerator random = new RandomTestDataGenerator();
-    private final IOHelper ioHelper = new IOHelper();
+    private final IOHelperTest ioHelperTest = new IOHelperTest();
     
     private Iterable<User> users;
     
@@ -49,19 +44,17 @@ public class Examples {
         val book = new ExcelBook();
         val headerStyle = book.makeStyle().foregroundColor(YELLOW).fillPattern(SOLID_FOREGROUND).build();
         val dateStyle = book.makeStyle("dd.MM.yy HH:mm").build();
-        val idStyle = buildIdStyle(book);
-        val amountStyle = buildCurrencyStyle(book);
         
         val bytes = book.add(block(users, headerStyle)
-                .add(column("ID", User::getId, idStyle))
+                .add(column("ID", User::getId, buildIdStyle(book)))
                 .add(column("Name", User::getName))
                 .add(column("Role", User::getRole))
                 .add(column("Register Date", User::getRegisterDate, dateStyle))
                 .add(column("Active", User::isActive))
-                .add(column("Balance", User::getBalance, amountStyle))
+                .add(column("Balance", User::getBalance, buildCurrencyStyle(book)))
         ).toBytes();
         
-        ioHelper.toDiskFile(DIR_PATH_XLSX_TEST, bytes);
+        ioHelperTest.toDiskFile(DIR_PATH_XLSX_TEST, bytes);
     }
     
     @Test
@@ -96,25 +89,7 @@ public class Examples {
                 )
         ).toBytes();
         
-        ioHelper.toDiskFile(DIR_PATH_XLSX_TEST, bytes);
+        ioHelperTest.toDiskFile(DIR_PATH_XLSX_TEST, bytes);
     }
     
-//    @Test
-//    public void name() {
-//        val list = new ArrayList<User>();
-//
-//        TimeMarker.setMark("start generate");
-//        val us = random.genRandomUsers(40_000_000);
-//        TimeMarker.setMark("finish generate");
-//
-//        for (val u : us) {
-//            list.add(u);
-//            count++;
-//        }
-//        TimeMarker.setMark("finish adding");
-//        TimeMarker.printState();
-//
-//        System.out.println(count + " list size = " + list.size());
-//    }
-//    private static int count = 0;
 }
