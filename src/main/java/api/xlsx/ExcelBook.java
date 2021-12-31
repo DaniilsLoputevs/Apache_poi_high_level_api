@@ -1,12 +1,12 @@
-package xlsx;
+package api.xlsx;
 
+import api.utils.Pair;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import utils.Pair;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import static org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT;
 
 public class ExcelBook {
     private final XSSFWorkbook workbook = new XSSFWorkbook();
-    private final List<ExcelBlock<?>> blocks = new ArrayList<>();
+    private final List<ExcelDataBlock<?>> blocks = new ArrayList<>();
     private final XSSFSheet firstWorksheet = workbook.createSheet("sheet 1");
     
     private List<Pair<Integer, Integer>> globalColIndexes;
@@ -25,19 +25,21 @@ public class ExcelBook {
         workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
     }
     
-    public ExcelBook addBlock(ExcelBlock<?> block) {
+    
+    public ExcelBook add(ExcelDataBlock<?> block) {
         block.setSheet(firstWorksheet);
         blocks.add(block);
         return this;
     }
     
+    
     public ExcelBook globalSetColumnWidth(int colIndex, int width) {
         if (globalColIndexes == null) globalColIndexes = new ArrayList<>();
-        globalColIndexes.add(new Pair(colIndex, width));
+        globalColIndexes.add(new Pair<>(colIndex, width));
         return this;
     }
     
-    public ExcelCellStyle.ExcelCellStyleBuilder buildStyle() {
+    public ExcelCellStyle.ExcelCellStyleBuilder makeStyle() {
         return ExcelCellStyle.builder()
                 .cellStyleInner(workbook.createCellStyle())
                 .horizontalAlignment(LEFT)
@@ -45,17 +47,11 @@ public class ExcelBook {
     }
     
     /** @param format - {@link ExcelCellStyle} */
-    public ExcelCellStyle.ExcelCellStyleBuilder buildStyle(String format) {
-        return buildStyle().format(format);
+    public ExcelCellStyle.ExcelCellStyleBuilder makeStyle(String format) {
+        return makeStyle().format(format);
     }
     
-    public ExcelCellStyle buildIdStyle() {
-        return buildStyle().format("0").build();
-    }
-    
-    public ExcelCellStyle buildCurrencyStyle() {
-        return buildStyle().format("0.00").build();
-    }
+  
     
     public ExcelFont.ExcelFontBuilder buildFont() {
         return ExcelFont.builder().innerFont(workbook.createFont());

@@ -1,4 +1,4 @@
-package utils;
+package api.utils;
 
 import lombok.val;
 import models.Role;
@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
-import static utils.DateUtil.toLocalDateTime;
+import static api.utils.DateUtil.toLocalDateTime;
 
 public class RandomTestDataGenerator {
     

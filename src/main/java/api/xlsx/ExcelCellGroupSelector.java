@@ -1,4 +1,4 @@
-package xlsx;
+package api.xlsx;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class ExcelCellGroupSelector<D> {
     
     /** для внутренних нужд. */
     @Setter
-    private ExcelBlock<D> excelBlockRef;
+    private ExcelDataBlock<D> excelDataBlockRef;
     private int lastRowIndex;
     private int lastColIndex;
     
@@ -66,7 +66,7 @@ public class ExcelCellGroupSelector<D> {
                 colEndIndex = Math.max(colEndIndex, cell.getColIndex());
             }
 //            System.out.printf("merge group :: mg[%s](%s-%s && %s-%s)%n",groupName, rowStartIndex, rowEndIndex, colStartIndex, colEndIndex);
-            excelBlockRef.getSheet().addMergedRegion(new CellRangeAddress(rowStartIndex, rowEndIndex, colStartIndex, colEndIndex));
+            excelDataBlockRef.getSheet().addMergedRegion(new CellRangeAddress(rowStartIndex, rowEndIndex, colStartIndex, colEndIndex));
         });
         doForGroup(groupName, doFunc);
         return this;

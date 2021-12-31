@@ -1,4 +1,4 @@
-package utils;
+package api.utils;
 
 import lombok.val;
 
@@ -34,12 +34,11 @@ public class DateUtil {
         return cal;
     }
     
-    // print hepler
-    
     public static LocalDateTime toLocalDateTime(Calendar calendar) {
         return LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
     }
     
+    // print helper
     
     private static void printCalendar(String name, Calendar calendar) {
         printCalendar(name, calendar, "yyyy-MM-dd HH:mm:ss");

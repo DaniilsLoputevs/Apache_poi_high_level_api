@@ -1,4 +1,4 @@
-package xlsx;
+package api.xlsx;
 
 import lombok.Builder;
 import org.apache.poi.ss.usermodel.*;
@@ -10,21 +10,20 @@ import java.awt.Color;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Важно знать про формат:
+ * 0 - будет Числовой формат (без знаков после запятой)
+ * 0.00 - будет Числовой формат (2 знака после запятой)
+ * <p>
+ * Далее действительны только с: {@link Calendar}, {@link Date})
+ * dd.MM.yy - будет Дата формат
+ * HH:ss - будет Время формат
+ * dd.MM.yy HH:ss - (другие форматы, работает так же, как Время или Дата)
+ */
 @Builder
 public class ExcelCellStyle {
-    public static final ExcelCellStyle EMPTY = ExcelCellStyle.builder().build();
-    
     private final XSSFCellStyle cellStyleInner;
     private final XSSFDataFormat dataFormatHelper;
-    /**
-     * 0 - будет Числовой формат (без знаков после запятой)
-     * 0.00 - будет Числовой формат (2 знака после запятой)
-     * <p>
-     * Далее действительны только с: {@link Calendar}, {@link Date})
-     * dd.MM.yy - будет Дата формат
-     * HH:ss - будет Время формат
-     * dd.MM.yy HH:ss - (другие форматы, работает так же, как Время или Дата)
-     */
     private final String format;
     private final Color foregroundColor;
     private final FillPatternType fillPattern;
