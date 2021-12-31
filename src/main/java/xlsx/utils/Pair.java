@@ -1,9 +1,12 @@
-package utils;
+package xlsx.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * @author Daniils Loputevs
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
