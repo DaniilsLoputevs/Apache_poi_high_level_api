@@ -1,4 +1,4 @@
-package api.xlsx;
+package xlsx.core;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,17 +12,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static api.utils.DateUtil.toCalendar;
-import static api.tools.ExcelCellStyles.DEFAULT;
-import static api.xlsx.ExcelCellGroupType.HEADER;
+import static xlsx.tools.ExcelCellStyles.DEFAULT;
+import static xlsx.utils.DateUtil.toCalendar;
+import static xlsx.core.ExcelCellGroupType.HEADER;
 
+/**
+ * @author Daniils Loputevs
+ */
 @RequiredArgsConstructor
 public class ExcelDataBlock<D> {
     @Getter
     private final List<ExcelColumn<D>> columns = new ArrayList<>();
     
     private final Iterable<D> data;
-    private final Map<ExcelCellGroupType, ExcelCellGroupSelector<?>> allGroups = new HashMap<>();
+    private final Map<ExcelCellGroupType, ExcelCellGroupSelector> allGroups = new HashMap<>();
     @Getter
     @Setter
     private XSSFSheet sheet;
@@ -36,9 +39,7 @@ public class ExcelDataBlock<D> {
         return this;
     }
     
-    
-    public ExcelDataBlock<D> addCellGroupsSelector(ExcelCellGroupSelector<D> selector) {
-        selector.setExcelDataBlockRef(this);
+    public ExcelDataBlock<D> add(ExcelCellGroupSelector selector) {
         selector.collectCells();
         allGroups.put(selector.getType(), selector);
         return this;
@@ -65,7 +66,6 @@ public class ExcelDataBlock<D> {
             val headerGroup = allGroups.get(HEADER);
             rowOffset = headerGroup.initInnerCells(sheet, rowOffset);
             rowOffset++;
-            headerGroup.executeGroupFuncs();
             
         } else {
             val headerRow = sheet.createRow(rowOffset++);
@@ -84,7 +84,7 @@ public class ExcelDataBlock<D> {
         else if (cellValue instanceof String) cell.setCellValue((String) cellValue);
         else if (cellValue instanceof Number) cell.setCellValue(((Number) cellValue).doubleValue());
         else if (cellValue instanceof Boolean) cell.setCellValue((Boolean) cellValue);
-        else if (cellValue instanceof Enum) cell.setCellValue(((Enum) cellValue).name());
+        else if (cellValue instanceof Enum) cell.setCellValue(((Enum<?>) cellValue).name());
         
         else if (cellValue instanceof Calendar) cell.setCellValue((Calendar) cellValue);
         else if (cellValue instanceof Date) cell.setCellValue(toCalendar((Date) cellValue));

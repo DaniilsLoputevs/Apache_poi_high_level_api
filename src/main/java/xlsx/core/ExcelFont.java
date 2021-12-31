@@ -1,9 +1,12 @@
-package api.xlsx;
+package xlsx.core;
 
 import lombok.Builder;
 import lombok.Data;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
+/**
+ * @author Daniils Loputevs
+ */
 @Data
 @Builder
 public class ExcelFont {

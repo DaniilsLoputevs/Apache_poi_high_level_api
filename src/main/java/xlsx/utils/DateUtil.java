@@ -1,4 +1,4 @@
-package api.utils;
+package xlsx.utils;
 
 import lombok.val;
 
@@ -12,6 +12,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+/**
+ * @author Daniils Loputevs
+ */
 public class DateUtil {
     
     // для большего перевода одних блин дат в другие блин даты: https://www.logicbig.com/how-to/java-8-date-time-api/to-date-conversion.html

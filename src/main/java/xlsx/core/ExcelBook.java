@@ -1,7 +1,8 @@
-package api.xlsx;
+package xlsx.core;
 
-import api.utils.Pair;
+import xlsx.utils.Pair;
 import lombok.Cleanup;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,9 +15,13 @@ import java.util.List;
 
 import static org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT;
 
+/**
+ * @author Daniils Loputevs
+ */
 public class ExcelBook {
     private final XSSFWorkbook workbook = new XSSFWorkbook();
     private final List<ExcelDataBlock<?>> blocks = new ArrayList<>();
+    @Getter
     private final XSSFSheet firstWorksheet = workbook.createSheet("sheet 1");
     
     private List<Pair<Integer, Integer>> globalColIndexes;
@@ -51,9 +56,8 @@ public class ExcelBook {
         return makeStyle().format(format);
     }
     
-  
     
-    public ExcelFont.ExcelFontBuilder buildFont() {
+    public ExcelFont.ExcelFontBuilder makeFont() {
         return ExcelFont.builder().innerFont(workbook.createFont());
     }
     

@@ -1,8 +1,11 @@
-package api.tools;
+package xlsx.tools;
 
-import api.xlsx.ExcelBook;
-import api.xlsx.ExcelCellStyle;
+import xlsx.core.ExcelBook;
+import xlsx.core.ExcelCellStyle;
 
+/**
+ * @author Daniils Loputevs
+ */
 public class ExcelCellStyles {
     public static final ExcelCellStyle EMPTY = ExcelCellStyle.builder().build();
     public static final ExcelCellStyle DEFAULT = ExcelCellStyle.builder().build();

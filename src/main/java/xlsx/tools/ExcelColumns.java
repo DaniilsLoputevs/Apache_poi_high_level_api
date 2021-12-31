@@ -1,13 +1,16 @@
-package api.tools;
+package xlsx.tools;
 
-import api.xlsx.ExcelCellStyle;
-import api.xlsx.ExcelColumn;
+import xlsx.core.ExcelCellStyle;
+import xlsx.core.ExcelColumn;
 
 import java.util.function.Function;
 
-import static api.tools.ExcelCellStyles.DEFAULT;
-import static api.tools.ExcelCellStyles.EMPTY;
+import static xlsx.tools.ExcelCellStyles.DEFAULT;
+import static xlsx.tools.ExcelCellStyles.EMPTY;
 
+/**
+ * @author Daniils Loputevs
+ */
 public class ExcelColumns {
     
     // empty header

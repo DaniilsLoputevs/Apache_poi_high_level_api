@@ -1,10 +1,13 @@
-package api.xlsx;
+package xlsx.core;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 
+/**
+ * @author Daniils Loputevs
+ */
 @Setter
 @Getter
 @RequiredArgsConstructor
