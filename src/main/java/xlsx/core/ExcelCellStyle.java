@@ -32,12 +32,13 @@ public class ExcelCellStyle {
     private final Color foregroundColor;
     private final IndexedColors foregroundColorIndex;
     private final FillPatternType fillPattern;
+    
     private final HorizontalAlignment horizontalAlignment;
     private final VerticalAlignment verticalAlignment;
+    
     private final ExcelFont font;
     
     private final BorderStyle borderAllSide;
-    
     private final BorderStyle borderTop;
     private final BorderStyle borderBottom;
     private final BorderStyle borderLeft;

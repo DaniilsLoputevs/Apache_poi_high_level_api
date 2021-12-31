@@ -43,29 +43,29 @@ public class DateUtil {
     
     // print helper
     
-    private static void printCalendar(String name, Calendar calendar) {
-        printCalendar(name, calendar, "yyyy-MM-dd HH:mm:ss");
+    public static void print(String name, Calendar calendar) {
+        print(name, calendar, "yyyy-MM-dd HH:mm:ss");
     }
     
-    private static void printLocalDate(String name, LocalDate localDate) {
-        printLocalDate(name, localDate, "yyyy-MM-dd");
+    public static void print(String name, LocalDate localDate) {
+        print(name, localDate, "yyyy-MM-dd");
     }
     
-    private static void printLocalDateTime(String name, LocalDateTime localDateTime) {
-        printLocalDateTime(name, localDateTime, "yyyy-MM-dd HH:mm:ss");
+    public static void print(String name, LocalDateTime localDateTime) {
+        print(name, localDateTime, "yyyy-MM-dd HH:mm:ss");
     }
     
-    private static void printCalendar(String name, Calendar calendar, String pattern) {
+    public static void print(String name, Calendar calendar, String pattern) {
         val format = new SimpleDateFormat(pattern);
         System.out.println(name + " : " + format.format(calendar.getTime()));
     }
     
-    private static void printLocalDate(String name, LocalDate localDate, String pattern) {
+    public static void print(String name, LocalDate localDate, String pattern) {
         val format = DateTimeFormatter.ofPattern(pattern);
         System.out.println(name + " : " + localDate.format(format));
     }
     
-    private static void printLocalDateTime(String name, LocalDateTime localDateTime, String pattern) {
+    public static void print(String name, LocalDateTime localDateTime, String pattern) {
         val format = DateTimeFormatter.ofPattern(pattern);
         System.out.println(name + " : " + localDateTime.format(format));
     }

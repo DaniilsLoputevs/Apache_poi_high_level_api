@@ -1,9 +1,6 @@
 package xlsx.core;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.val;
+import lombok.*;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -11,10 +8,12 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import static xlsx.tools.ExcelCellStyles.DEFAULT;
 import static xlsx.utils.DateUtil.toCalendar;
 import static xlsx.core.ExcelCellGroupType.HEADER;
+import static xlsx.utils.Util.sizeOfIterable;
 
 /**
  * @author Daniils Loputevs
@@ -24,13 +23,15 @@ public class ExcelDataBlock<D> {
     @Getter
     private final List<ExcelColumn<D>> columns = new ArrayList<>();
     
-    private final Iterable<D> data;
+//    private final boolean parallel;
+    private final CompletableFuture<Iterable<D>> dataFuture;
     private final Map<ExcelCellGroupType, ExcelCellGroupSelector> allGroups = new HashMap<>();
     @Getter
     @Setter
     private XSSFSheet sheet;
     @Setter
     private ExcelCellStyle defaultHeaderStyle;
+    
     
     
     public ExcelDataBlock<D> add(ExcelColumn<D> column) {
@@ -45,12 +46,14 @@ public class ExcelDataBlock<D> {
         return this;
     }
     
+    @SneakyThrows
     public void writeToWorkBookSheet(XSSFSheet sheet) {
         int rowIndex = (sheet.getLastRowNum() == 0) ? 0 : sheet.getLastRowNum() + 2;
         
         rowIndex = setBlockHeader(sheet, rowIndex);
         
-        for (val currentRowData : data) {
+        
+        for (val currentRowData : dataFuture.get()) {
             val currentRow = sheet.createRow(rowIndex++);
             int cellIndex = 0;
             for (val column : columns) {
@@ -59,7 +62,15 @@ public class ExcelDataBlock<D> {
                         column.getDataStyle().apply(currentRowData).terminate());
             }
         }
+//        val data = dataFuture.get();
+//        val dataSize = sizeOfIterable(data);
+//        if (dataSize <= 1_000 || parallel) writeIterableSingle(data, rowIndex);
+//        else {
+//            if (data instanceof List<?>) writeListAsync((List<D>) data, dataSize, rowIndex);
+//            else writeIterableAsync(data, dataSize, rowIndex);
+//        }
     }
+ 
     
     private int setBlockHeader(XSSFSheet sheet, int rowOffset) {
         if (allGroups.containsKey(HEADER)) {
@@ -76,6 +87,37 @@ public class ExcelDataBlock<D> {
         }
         return rowOffset;
     }
+    
+//    private void writeIterableSingle(Iterable<D> data, int rowIndex) {
+//        for (val currentRowData : data) {
+//            val currentRow = sheet.createRow(rowIndex++);
+//            int cellIndex = 0;
+//            for (val column : columns) {
+//                createCellAndSetValue(currentRow, cellIndex++,
+//                        column.getDataGetter().apply(currentRowData),
+//                        column.getDataStyle().apply(currentRowData).terminate());
+//            }
+//        }
+//    }
+
+//    private void writeListAsync(List<D> data, int dataSize, int rowIndexOrig) {
+//        val one = CompletableFuture.runAsync(() ->{
+//            int rowIndex = rowIndexOrig;
+//            for (int i = 0; i < dataSize / 2; i++) {
+//                val currentRowData = data.get(i);
+//                val currentRow = sheet.createRow(rowIndex++);
+//                int cellIndex = 0;
+//                for (val column : columns) {
+//                    createCellAndSetValue(currentRow, cellIndex++,
+//                            column.getDataGetter().apply(currentRowData),
+//                            column.getDataStyle().apply(currentRowData).terminate());
+//                }
+//            }
+//        });
+//    }
+//    private void writeIterableAsync(Iterable<D> data, int dataSize, int rowIndex) {
+//
+//    }
     
     private void createCellAndSetValue(XSSFRow row, int cellIndex, Object cellValue, CellStyle cellStyle) {
         val cell = row.getCell(cellIndex);
