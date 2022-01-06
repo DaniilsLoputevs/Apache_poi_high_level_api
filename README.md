@@ -5,13 +5,15 @@
 * easy example
   - [go to code](src/test/java/xlsx/Examples.java)
   - [go to result xlsx file](src/test/java/xlsxfiles/example_result_easy.xlsx)
-  ![Img](github/img_xlsx_example_easy.png?raw=true "Output example easy")
+
+![Img](github/img_xlsx_example_easy.png?raw=true "Output example easy")
 
 
 * complex example 
   - [go to code](src/test/java/xlsx/Examples.java)
   - [go to result xlsx file](src/test/java/xlsxfiles/example_result_complex.xlsx)
-  ![Img](github/img_xlsx_example_complex.png?raw=true "Output example hard")
+
+![Img](github/img_xlsx_example_complex.png?raw=true "Output example hard")
 
 ## path notes
 #### 1.2.1
