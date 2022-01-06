@@ -1,10 +1,10 @@
 package xlsx.core;
 
 import lombok.Builder;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 
 import java.awt.Color;
 import java.util.Date;
@@ -26,13 +26,14 @@ import java.util.Date;
  */
 @Builder
 public class ExcelCellStyle {
-    private final XSSFCellStyle cellStyleInner;
-    private final XSSFDataFormat dataFormatHelper;
+    private final CellStyle cellStyleInner;
+    private final DataFormat dataFormatHelper;
     private final String format;
     private final Color foregroundColor;
     private final IndexedColors foregroundColorIndex;
     private final FillPatternType fillPattern;
     
+    private final HorizontalAlignment allSideAlignment;
     private final HorizontalAlignment horizontalAlignment;
     private final VerticalAlignment verticalAlignment;
     
@@ -47,11 +48,20 @@ public class ExcelCellStyle {
     
     public CellStyle terminate() {
         if (format != null) cellStyleInner.setDataFormat(dataFormatHelper.getFormat(format));
-        if (foregroundColor != null) cellStyleInner.setFillForegroundColor(new XSSFColor(foregroundColor));
+        if (foregroundColor != null)
+            if (cellStyleInner instanceof HSSFCellStyle)
+                throw new IllegalStateException("java.awt.Color is support only for XSSFCellStyle OR SXSSFCellStyle.");
+            else ((XSSFCellStyle) cellStyleInner).setFillForegroundColor(new XSSFColor(foregroundColor, null));
         if (foregroundColorIndex != null) cellStyleInner.setFillForegroundColor(foregroundColorIndex.index);
         if (fillPattern != null) cellStyleInner.setFillPattern(fillPattern);
-        if (horizontalAlignment != null) cellStyleInner.setAlignment(horizontalAlignment);
-        if (verticalAlignment != null) cellStyleInner.setVerticalAlignment(verticalAlignment);
+        
+        if (allSideAlignment != null) {
+            cellStyleInner.setAlignment(allSideAlignment);
+            cellStyleInner.setVerticalAlignment(VerticalAlignment.valueOf(allSideAlignment.name()));
+        } else {
+            if (horizontalAlignment != null) cellStyleInner.setAlignment(horizontalAlignment);
+            if (verticalAlignment != null) cellStyleInner.setVerticalAlignment(verticalAlignment);
+        }
         
         if (borderAllSide != null) {
             cellStyleInner.setBorderTop(borderAllSide);

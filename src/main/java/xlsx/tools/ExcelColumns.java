@@ -13,7 +13,8 @@ import static xlsx.tools.ExcelCellStyles.EMPTY;
  */
 public class ExcelColumns {
     
-    // empty header
+    /* empty header */
+    
     public static <D> ExcelColumn<D> columnEmptyHeader(Function<D, Object> dataGetter, ExcelCellStyle dataStyle) {
         return new ExcelColumn<>("", EMPTY, dataGetter, (__) -> dataStyle);
     }

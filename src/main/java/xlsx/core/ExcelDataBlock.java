@@ -2,17 +2,17 @@ package xlsx.core;
 
 import lombok.*;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import static xlsx.core.ExcelCellGroupType.HEADER;
 import static xlsx.tools.ExcelCellStyles.DEFAULT;
 import static xlsx.utils.DateUtil.toCalendar;
-import static xlsx.core.ExcelCellGroupType.HEADER;
 
 /**
  * @author Daniils Loputevs
@@ -26,10 +26,9 @@ public class ExcelDataBlock<D> {
     private final Map<ExcelCellGroupType, ExcelCellGroupSelector> allGroups = new HashMap<>();
     @Getter
     @Setter
-    private XSSFSheet sheet;
+    private Sheet sheet;
     @Setter
     private ExcelCellStyle defaultHeaderStyle;
-    
     
     
     public ExcelDataBlock<D> add(ExcelColumn<D> column) {
@@ -45,9 +44,13 @@ public class ExcelDataBlock<D> {
     }
     
     @SneakyThrows
-    public void writeToWorkBookSheet(XSSFSheet sheet) {
-        int rowIndex = (sheet.getLastRowNum() == 0) ? 0 : sheet.getLastRowNum() + 2;
-        
+    public void writeToWorkBookSheet(Sheet sheet) {
+        System.out.println("cond = " + (sheet.getLastRowNum() == 0));
+        System.out.println("sheet.getLastRowNum() = " + (sheet.getLastRowNum()));
+        // if this dataBlock isn't first, we skip 1 empty line
+        int rowIndex = (sheet.getLastRowNum() == -1) ? 0 : sheet.getLastRowNum() + 2;
+    
+        System.out.println("init rowIndex = " + rowIndex);
         rowIndex = setBlockHeader(sheet, rowIndex);
         
         for (val currentRowData : dataFuture.get()) {
@@ -60,15 +63,15 @@ public class ExcelDataBlock<D> {
             }
         }
     }
- 
-    
-    private int setBlockHeader(XSSFSheet sheet, int rowOffset) {
+
+    private int setBlockHeader(Sheet sheet, int rowOffset) {
         if (allGroups.containsKey(HEADER)) {
             val headerGroup = allGroups.get(HEADER);
             rowOffset = headerGroup.initInnerCells(sheet, rowOffset);
             rowOffset++;
             
         } else {
+            System.out.println("header rowOffset = " + rowOffset);
             val headerRow = sheet.createRow(rowOffset++);
             int cellIndex = 0;
             for (val col : columns) {
@@ -78,7 +81,7 @@ public class ExcelDataBlock<D> {
         return rowOffset;
     }
     
-    private void createCellAndSetValue(XSSFRow row, int cellIndex, Object cellValue, CellStyle cellStyle) {
+    private void createCellAndSetValue(Row row, int cellIndex, Object cellValue, CellStyle cellStyle) {
         val cell = row.getCell(cellIndex);
         
         if (cellValue == null) cell.setCellValue("");

@@ -1,17 +1,22 @@
 # Apache poi high level API
-#### Last ver: 1.2
+#### Last ver: 1.2.1
 
 ## How to use
-See code in Examples in test package 
-* output for easy example
+* easy example
+  - [go to code](src/test/java/xlsx/Examples.java)
+  - [go to result xlsx file](src/test/java/xlsxfiles/example_result_easy.xlsx)
+  ![Img](github/img_xlsx_example_easy.png?raw=true "Output example easy")
 
-![Img](/github/img_xlsx_example_easy.png?raw=true "Output example easy")
 
-* output for hard example
-
-![Img](/github/img_xlsx_example_hard.png?raw=true "Output example hard")
+* complex example 
+  - [go to code](src/test/java/xlsx/Examples.java)
+  - [go to result xlsx file](src/test/java/xlsxfiles/example_result_complex.xlsx)
+  ![Img](github/img_xlsx_example_complex.png?raw=true "Output example hard")
 
 ## path notes
+#### 1.2.1
+* all side alignment
+* bug fixes
 #### 1.2
 * change public api style
 * docs

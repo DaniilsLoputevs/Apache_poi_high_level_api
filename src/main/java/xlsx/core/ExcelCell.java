@@ -3,7 +3,7 @@ package xlsx.core;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
  * @author Daniils Loputevs
@@ -23,14 +23,14 @@ public class ExcelCell {
     private ExcelCellStyle style;
     
     @Getter
-    private XSSFCell innerCell;
+    private Cell innerCell;
     
     public ExcelCell(int rowIndex, int colIndex) {
         this.rowIndex = rowIndex;
         this.colIndex = colIndex;
     }
     
-    public XSSFCell terminate() {
+    public Cell terminate() {
         if (innerCell == null) throw new IllegalStateException("innerCell is null");
         
         if (value != null) innerCell.setCellValue((String) value);

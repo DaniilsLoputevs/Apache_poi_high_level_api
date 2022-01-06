@@ -2,7 +2,7 @@ package xlsx.core;
 
 import lombok.Data;
 import lombok.val;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class ExcelCellGroup {
         operations.add(operation);
     }
     
-    void initInnerCells(XSSFSheet sheet, int rowOffset) {
+    void initInnerCells(Sheet sheet, int rowOffset) {
         if (phantomCells.isEmpty())
             throw new IllegalStateException(String.format("groupName=\"%s\" is empty! Check your code on GroupSelector", groupName));
         for (val phantomCell : phantomCells) {
