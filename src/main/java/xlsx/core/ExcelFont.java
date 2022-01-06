@@ -2,7 +2,7 @@ package xlsx.core;
 
 import lombok.Builder;
 import lombok.Data;
-import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.ss.usermodel.Font;
 
 /**
  * @author Daniils Loputevs
@@ -14,12 +14,12 @@ public class ExcelFont {
     private final Number height;
     private final String fontName;
     
-    private final XSSFFont innerFont;
+    private final Font innerFont;
     
-    public XSSFFont terminate() {
+    public Font terminate() {
         innerFont.setBold(bold);
-        innerFont.setFontHeight(height.doubleValue());
-        innerFont.setFontName(fontName);
+        if (height != null) innerFont.setFontHeightInPoints(height.shortValue());
+        if (fontName != null) innerFont.setFontName(fontName);
         
         return innerFont;
     }

@@ -3,7 +3,7 @@ package xlsx.core;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,7 +55,7 @@ public class ExcelCellGroupSelector {
         }
     }
     
-    int initInnerCells(XSSFSheet sheet, int rowOffset) {
+    int initInnerCells(Sheet sheet, int rowOffset) {
         for (val excelCellGroup : groups.values()) {
             excelCellGroup.initInnerCells(sheet, rowOffset);
             lastRowIndex = Math.max(lastRowIndex, excelCellGroup.getLastRowIndex());

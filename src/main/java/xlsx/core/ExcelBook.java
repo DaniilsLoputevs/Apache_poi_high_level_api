@@ -1,13 +1,14 @@
 package xlsx.core;
 
-import xlsx.utils.Pair;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import xlsx.utils.Pair;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -19,10 +20,11 @@ import static org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT;
  * @author Daniils Loputevs
  */
 public class ExcelBook {
-    private final XSSFWorkbook workbook = new XSSFWorkbook();
+    // TODO: work with SXXSFWorkbook
+    private final Workbook workbook = new XSSFWorkbook();
     private final List<ExcelDataBlock<?>> blocks = new ArrayList<>();
     @Getter
-    private final XSSFSheet firstWorksheet = workbook.createSheet("sheet 1");
+    private final Sheet firstWorksheet = workbook.createSheet("sheet 1");
     
     private List<Pair<Integer, Integer>> globalColIndexes;
     
@@ -76,7 +78,7 @@ public class ExcelBook {
         return bos.toByteArray();
     }
     
-    private void autoSizeAllColumns(XSSFSheet sheet) {
+    private void autoSizeAllColumns(Sheet sheet) {
         int lastColumnIndex = 0;
         for (val block : blocks) {
             lastColumnIndex = Math.max(lastColumnIndex, block.getColumns().size());
