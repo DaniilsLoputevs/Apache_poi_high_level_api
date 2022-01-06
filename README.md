@@ -3,14 +3,14 @@
 
 ## How to use
 * easy example
-  - [go to code]()
-  - [go to result xlsx file]()
+  - [go to code](src/test/java/xlsx/Examples.java)
+  - [go to result xlsx file](src/test/java/xlsxfiles/example_result_easy.xlsx)
   ![Img](github/img_xlsx_example_easy.png?raw=true "Output example easy")
 
 
 * complex example 
-  - [go to code]()
-  - [go to result xlsx file]()
+  - [go to code](src/test/java/xlsx/Examples.java)
+  - [go to result xlsx file](src/test/java/xlsxfiles/example_result_complex.xlsx)
   ![Img](github/img_xlsx_example_complex.png?raw=true "Output example hard")
 
 ## path notes
