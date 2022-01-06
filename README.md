@@ -33,5 +33,5 @@
 
 
 #### Dependencies
-* apache poi
-* lombok
+* apache poi (5.1.0)
+* lombok (1.18.22)
