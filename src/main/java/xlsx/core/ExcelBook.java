@@ -1,8 +1,6 @@
 package xlsx.core;
 
-import lombok.Cleanup;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -10,7 +8,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import xlsx.utils.Pair;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,18 +21,19 @@ public class ExcelBook {
     /** for more docs, see {@link Sheet#setColumnWidth} */
     public static final int ABOUT_STANDARD_WIDTH_EXCEL_CHAR = 256;
     
-    // TODO: work with SXXSFWorkbook
-    private Workbook workbook;
+    Workbook workbook;
     @Deprecated
     private final List<ExcelDataBlock<?>> blocks = new ArrayList<>();
     @Getter
     @Deprecated
     private Sheet firstWorksheet;
-//    private final Sheet firstWorksheet = workbook.createSheet("sheet 1");
+    //    private final Sheet firstWorksheet = workbook.createSheet("sheet 1");
     @Deprecated
     private List<Pair<Integer, Integer>> globalColIndexes;
     
-    private final List<ExcelSheet> sheets = new ArrayList<>();
+    final ExcelBookWriter writer = new ExcelBookWriter();
+    final List<ExcelSheet> sheets = new ArrayList<>();
+    boolean isTerminated = false;
     
     public ExcelBook() {
         this.workbook = new XSSFWorkbook();
@@ -63,6 +61,7 @@ public class ExcelBook {
     }
     
     public ExcelBook add(ExcelSheet sheet) {
+        sheet.name = "sheet " + sheets.size() + 1;
         sheets.add(sheet);
         return this;
     }
@@ -98,12 +97,14 @@ public class ExcelBook {
     }
     
     
-    @Deprecated
-    @SneakyThrows
     public byte[] toBytes() {
-        return new ExcelBookWriter().writeExcelBookToBytes(this);
+        return writer.writeExcelBookToBytes(this);
     }
     
+    public ExcelBook terminate() {
+        return writer.terminateExcelBook(this);
+    }
+
 //    @Deprecated
 //    @SneakyThrows
 //    public byte[] toBytes() {
@@ -121,14 +122,14 @@ public class ExcelBook {
 //        return bos.toByteArray();
 //    }
     
-    private void autoSizeAllColumns(Sheet sheet) {
-        int lastColumnIndex = 0;
-        for (val block : blocks) {
-            lastColumnIndex = Math.max(lastColumnIndex, block.getColumns().size());
-        }
-        for (int columnIndex = 0; columnIndex < lastColumnIndex; columnIndex++) {
-            sheet.autoSizeColumn(columnIndex);
-        }
-    }
+//    private void autoSizeAllColumns(Sheet sheet) {
+//        int lastColumnIndex = 0;
+//        for (val block : blocks) {
+//            lastColumnIndex = Math.max(lastColumnIndex, block.getColumns().size());
+//        }
+//        for (int columnIndex = 0; columnIndex < lastColumnIndex; columnIndex++) {
+//            sheet.autoSizeColumn(columnIndex);
+//        }
+//    }
     
 }

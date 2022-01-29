@@ -21,10 +21,10 @@ import static xlsx.utils.DateUtil.toCalendar;
 @RequiredArgsConstructor
 public class ExcelDataBlock<D> {
     @Getter
-    private final List<ExcelColumn<D>> columns = new ArrayList<>();
+    final List<ExcelColumn<D>> columns = new ArrayList<>();
     
     private final CompletableFuture<Iterable<D>> dataFuture;
-    private final Map<ExcelCellGroupType, ExcelCellGroupSelector> allGroups = new HashMap<>();
+    final Map<ExcelCellGroupType, ExcelCellGroupSelector> allGroups = new HashMap<>();
     private Iterable<D> data;
     @Getter
     @Setter

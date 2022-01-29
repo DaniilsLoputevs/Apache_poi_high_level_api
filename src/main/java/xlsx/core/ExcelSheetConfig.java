@@ -3,13 +3,20 @@ package xlsx.core;
 import xlsx.utils.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExcelSheetConfig {
-    private final List<Pair<Integer, Double>> columnIndexAndWidth = new ArrayList<>();
+    final Map<Integer, Integer> columnsIndexAndWidth = new HashMap<>();
+    String sheetName;
     
-    public ExcelSheetConfig add(Pair<Integer, Double> colWidth) {
-        columnIndexAndWidth.add(colWidth);
+    public ExcelSheetConfig add(Pair<Integer, Integer> colWidth) {
+        columnsIndexAndWidth.put(colWidth.getFirst(), colWidth.getSecond());
+        return this;
+    }
+    public ExcelSheetConfig set(String sheetName) {
+        this.sheetName = sheetName;
         return this;
     }
     

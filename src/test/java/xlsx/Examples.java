@@ -27,12 +27,11 @@ import static xlsx.tools.ExcelSheets.sheet;
 
 /**
  * TODO : multi sheet write
- * TODO : делать return просто XSSFWorkbook (method terminate and return)
- * TODO : дать опции работать с Интерфейсов Workbook и выбирать SXSSF || HSSF || XSSF
  * TODO : Stream?
  * TODO : Reactive?
  * TODO : ? Global workbook, sheet Options|settings ?
  * TODO : ? Better AutoSize that default is. (helps: https://stackoverflow.com/questions/18983203/how-to-speed-up-autosizing-columns-in-apache-poi)
+ * TODO : Sheet Setting - sheet name
  *
  * TODO : README - оставить ссылку на Examples(переместить из core в main package)
  * TODO : README - описать код в readme
@@ -45,12 +44,13 @@ import static xlsx.tools.ExcelSheets.sheet;
  * TODO :
  * TODO : FIX : if header not set, default use {@link xlsx.tools.ExcelCellStyles#EMPTY}
  * TODO :
- * TODO : 1 - multi-sheet ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- * TODO : 2 - separate BookWrite ^^^^^^^^^^^^^^^^^^^^^^^
- * TODO : 3 - auto resolve SXSSF || XSSF
+ * TODO : 1 - multi-sheet ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * TODO : 2 - separate BookWrite ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * TODO : 3 - auto resolve SXSSF || XSSF ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  * TODO : 4 - autoSize for SXSSF
  * TODO : 5 - emptyHeaderColumn -> noHeaderColumn
- * TODO : 6 - SheetConfig ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * TODO : 6 - SheetConfig ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * TODO : 7 - possible just terminate ExcelBook. (then use to other things) ^^^^^^^^
  * TODO :
  *
  *
@@ -175,7 +175,7 @@ public class Examples {
                 .add(column("Register Date", User::getRegisterDate, dateStyle))
                 .add(column("Active", User::isActive))
                 .add(column("Balance", User::getBalance, buildCurrencyStyle(book)))
-        ).add(config()
+        ).set(config()
                 .add(columnWidth(0, 12))
         )).toBytes();
         

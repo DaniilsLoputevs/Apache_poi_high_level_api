@@ -1,14 +1,17 @@
 package xlsx.core;
 
 import lombok.Getter;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 public class ExcelSheet {
-    private final List<ExcelDataBlock<?>> dataBlocks = new ArrayList<>();
-    private final List<ExcelSheetConfig> settings = new ArrayList<>();
+    String name;
+    final List<ExcelDataBlock<?>> dataBlocks = new ArrayList<>();
+    ExcelSheetConfig config;
+    Sheet innerWorksheet;
     int maxColumnsCount;
     int totalRowsCount;
     
@@ -17,8 +20,8 @@ public class ExcelSheet {
         return this;
     }
     
-    public ExcelSheet add(ExcelSheetConfig config) {
-        this.settings.add(config);
+    public ExcelSheet set(ExcelSheetConfig config) {
+        this.config = config;
         return this;
     }
 }
