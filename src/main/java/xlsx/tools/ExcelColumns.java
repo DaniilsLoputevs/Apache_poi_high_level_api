@@ -11,7 +11,7 @@ import static xlsx.tools.ExcelCellStyles.EMPTY;
 /**
  * @author Daniils Loputevs
  */
-public class ExcelColumns {
+public final class ExcelColumns {
     
     /* empty header */
     

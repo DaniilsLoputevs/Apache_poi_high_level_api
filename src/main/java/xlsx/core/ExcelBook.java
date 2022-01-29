@@ -14,32 +14,66 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT;
+import static org.apache.poi.ss.usermodel.HorizontalAlignment.RIGHT;
 
 /**
  * @author Daniils Loputevs
  */
+@Getter
 public class ExcelBook {
+    /** for more docs, see {@link Sheet#setColumnWidth} */
+    public static final int ABOUT_STANDARD_WIDTH_EXCEL_CHAR = 256;
+    
     // TODO: work with SXXSFWorkbook
-    private final Workbook workbook = new XSSFWorkbook();
+    private Workbook workbook;
+    @Deprecated
     private final List<ExcelDataBlock<?>> blocks = new ArrayList<>();
     @Getter
-    private final Sheet firstWorksheet = workbook.createSheet("sheet 1");
-    
+    @Deprecated
+    private Sheet firstWorksheet;
+//    private final Sheet firstWorksheet = workbook.createSheet("sheet 1");
+    @Deprecated
     private List<Pair<Integer, Integer>> globalColIndexes;
     
+    private final List<ExcelSheet> sheets = new ArrayList<>();
+    
     public ExcelBook() {
+        this.workbook = new XSSFWorkbook();
+        init();
+    }
+    
+    @Deprecated
+    // TODO : быстрое решение, хотелось бы, сделать по лучше, чем такой полу-костыль.
+    public ExcelBook(Workbook workbook) {
+        this.workbook = workbook;
+        init();
+    }
+    
+    private void init() {
         workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+        this.firstWorksheet = workbook.createSheet("sheet 1");
     }
     
     
+    @Deprecated
     public ExcelBook add(ExcelDataBlock<?> block) {
         block.setSheet(firstWorksheet);
         blocks.add(block);
         return this;
     }
     
+    public ExcelBook add(ExcelSheet sheet) {
+        sheets.add(sheet);
+        return this;
+    }
     
+    /** This method is SPECIAL made package private. */
+    void setWorkbook(Workbook workbook) {
+        this.workbook = workbook;
+    }
+    
+    
+    @Deprecated
     public ExcelBook globalSetColumnWidth(int colIndex, int width) {
         if (globalColIndexes == null) globalColIndexes = new ArrayList<>();
         globalColIndexes.add(new Pair<>(colIndex, width));
@@ -49,7 +83,7 @@ public class ExcelBook {
     public ExcelCellStyle.ExcelCellStyleBuilder makeStyle() {
         return ExcelCellStyle.builder()
                 .cellStyleInner(workbook.createCellStyle())
-                .horizontalAlignment(LEFT)
+                .horizontalAlignment(RIGHT)
                 .dataFormatHelper(workbook.getCreationHelper().createDataFormat());
     }
     
@@ -63,20 +97,29 @@ public class ExcelBook {
         return ExcelFont.builder().innerFont(workbook.createFont());
     }
     
+    
+    @Deprecated
     @SneakyThrows
     public byte[] toBytes() {
-        blocks.forEach(block -> block.writeToWorkBookSheet(firstWorksheet));
-        
-        autoSizeAllColumns(firstWorksheet);
-        
-        if (globalColIndexes != null)
-            globalColIndexes.forEach(pair -> firstWorksheet.setColumnWidth(pair.getFirst(), pair.getSecond()));
-        
-        @Cleanup val bos = new ByteArrayOutputStream();
-        workbook.write(bos);
-        
-        return bos.toByteArray();
+        return new ExcelBookWriter().writeExcelBookToBytes(this);
     }
+    
+//    @Deprecated
+//    @SneakyThrows
+//    public byte[] toBytes() {
+//        blocks.forEach(block -> block.writeToWorkBookSheet(firstWorksheet));
+//
+//        // todo - do normal way
+////        autoSizeAllColumns(firstWorksheet);
+////
+////        if (globalColIndexes != null)
+////            globalColIndexes.forEach(pair -> firstWorksheet.setColumnWidth(pair.getFirst(), pair.getSecond()));
+//
+//        @Cleanup val bos = new ByteArrayOutputStream();
+//        workbook.write(bos);
+//
+//        return bos.toByteArray();
+//    }
     
     private void autoSizeAllColumns(Sheet sheet) {
         int lastColumnIndex = 0;

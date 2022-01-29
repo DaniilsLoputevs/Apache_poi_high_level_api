@@ -6,7 +6,7 @@ import xlsx.core.ExcelCellStyle;
 /**
  * @author Daniils Loputevs
  */
-public class ExcelCellStyles {
+public final class ExcelCellStyles {
     public static final ExcelCellStyle EMPTY = ExcelCellStyle.builder().build();
     public static final ExcelCellStyle DEFAULT = ExcelCellStyle.builder().build();
     

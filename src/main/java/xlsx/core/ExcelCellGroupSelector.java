@@ -53,6 +53,9 @@ public class ExcelCellGroupSelector {
             colIndex = 0;
             rowIndex++;
         }
+//        for (val entry : groups.entrySet()) {
+//            System.out.println("collectCells :: " + entry.getKey() + " && " + entry.getValue().getPhantomCells().size());
+//        }
     }
     
     int initInnerCells(Sheet sheet, int rowOffset) {

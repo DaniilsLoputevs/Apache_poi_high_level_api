@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static xlsx.core.ExcelCellGroupType.HEADER;
 import static xlsx.tools.ExcelCellStyles.DEFAULT;
@@ -24,6 +25,7 @@ public class ExcelDataBlock<D> {
     
     private final CompletableFuture<Iterable<D>> dataFuture;
     private final Map<ExcelCellGroupType, ExcelCellGroupSelector> allGroups = new HashMap<>();
+    private Iterable<D> data;
     @Getter
     @Setter
     private Sheet sheet;
@@ -43,14 +45,27 @@ public class ExcelDataBlock<D> {
         return this;
     }
     
+    /**
+     * This method will wait until dataFuture finish, here is SYNC moment.
+     * If you set here real CompletableFuture, it's possible to throw exception.
+     * If you just set date{@code Iterable<D>} it will not produce any exception
+     *
+     * @return data of block.
+     *
+     * @throws RuntimeException nested exceptions may be: <br/>
+     * {@link InterruptedException} <br/>
+     * {@link ExecutionException}
+     */
+    @SneakyThrows
+    public Iterable<D> getData() {
+        return dataFuture.get();
+    }
+    
     @SneakyThrows
     public void writeToWorkBookSheet(Sheet sheet) {
-        System.out.println("cond = " + (sheet.getLastRowNum() == 0));
-        System.out.println("sheet.getLastRowNum() = " + (sheet.getLastRowNum()));
         // if this dataBlock isn't first, we skip 1 empty line
         int rowIndex = (sheet.getLastRowNum() == -1) ? 0 : sheet.getLastRowNum() + 2;
-    
-        System.out.println("init rowIndex = " + rowIndex);
+        
         rowIndex = setBlockHeader(sheet, rowIndex);
         
         for (val currentRowData : dataFuture.get()) {
@@ -63,7 +78,7 @@ public class ExcelDataBlock<D> {
             }
         }
     }
-
+    
     private int setBlockHeader(Sheet sheet, int rowOffset) {
         if (allGroups.containsKey(HEADER)) {
             val headerGroup = allGroups.get(HEADER);
@@ -71,7 +86,6 @@ public class ExcelDataBlock<D> {
             rowOffset++;
             
         } else {
-            System.out.println("header rowOffset = " + rowOffset);
             val headerRow = sheet.createRow(rowOffset++);
             int cellIndex = 0;
             for (val col : columns) {

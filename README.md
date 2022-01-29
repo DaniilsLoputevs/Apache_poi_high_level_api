@@ -1,5 +1,5 @@
 # Apache poi high level API
-#### Last ver: 1.2.1
+#### Last ver: 1.3
 
 ## How to use
 * easy example
@@ -16,6 +16,8 @@
 ![Img](github/img_xlsx_example_complex.png?raw=true "Output example hard")
 
 ## path notes
+#### 1.2.1
+* work with java 8
 #### 1.2.1
 * all side alignment
 * bug fixes

@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 /**
  * @author Daniils Loputevs
  */
-public class ExcelCellGroupSelectors {
+public final class ExcelCellGroupSelectors {
     
     public static ExcelCellGroupSelector cellGroupSelector(ExcelCellGroupType type, String collectPattern) {
         return new ExcelCellGroupSelector(type, collectPattern);
@@ -28,6 +28,7 @@ public class ExcelCellGroupSelectors {
     
     public static Consumer<List<ExcelCell>> mergeCellGroupAndSetValueAndStyle(String value, ExcelCellStyle style, ExcelBook book) {
         return (List<ExcelCell> cells) -> {
+            if (cells.size() == 1) throw new IllegalStateException("try to merge 1 cell, not many cells");
             int rowStartIndex = Integer.MAX_VALUE, rowEndIndex = 0, colStartIndex = Integer.MAX_VALUE, colEndIndex = 0;
             for (val cell : cells) {
                 cell.setValue(value);
@@ -38,7 +39,6 @@ public class ExcelCellGroupSelectors {
                 colStartIndex = Math.min(colStartIndex, cell.getColIndex());
                 colEndIndex = Math.max(colEndIndex, cell.getColIndex());
             }
-//            System.out.printf("merge group :: mg[%s](%s-%s && %s-%s)%n",groupName, rowStartIndex, rowEndIndex, colStartIndex, colEndIndex);
             book.getFirstWorksheet().addMergedRegion(new CellRangeAddress(rowStartIndex, rowEndIndex, colStartIndex, colEndIndex));
         };
     }
