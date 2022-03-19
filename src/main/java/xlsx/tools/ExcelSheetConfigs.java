@@ -4,7 +4,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import xlsx.core.ExcelSheetConfig;
 import xlsx.utils.Pair;
 
-import static xlsx.core.ExcelBook.ABOUT_STANDARD_WIDTH_EXCEL_CHAR;
+import static xlsx.core.ExcelBookWriter.ABOUT_STANDARD_WIDTH_EXCEL_CHAR;
+
 
 public class ExcelSheetConfigs {
     

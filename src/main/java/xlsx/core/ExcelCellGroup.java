@@ -2,17 +2,23 @@ package xlsx.core;
 
 import lombok.Data;
 import lombok.val;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @author Daniils Loputevs
  */
 @Data
 public class ExcelCellGroup {
+    private static int counter = 0;
+    
+    private final int id = counter++;
     private final String groupName;
     /**
      * phantom cause at init stage this cells will have only coordinates, innerCell == null.
@@ -21,10 +27,12 @@ public class ExcelCellGroup {
     private final List<ExcelCell> phantomCells = new ArrayList<>();
     /** operations that will be invoked then phantomCells will receive real value for innerCell. */
     private final List<Consumer<List<ExcelCell>>> operations = new ArrayList<>();
+    private final List<BiConsumer<ExcelDataBlock<?>, List<ExcelCell>>> biOperations = new ArrayList<>();
     
     
     private int lastRowIndex;
     private int lastColIndex;
+    ExcelDataBlock<?> innerDataBlock;
     
     public ExcelCellGroup(String groupName) {
         this.groupName = groupName;
@@ -42,6 +50,10 @@ public class ExcelCellGroup {
     
     public void addOperation(Consumer<List<ExcelCell>> operation) {
         operations.add(operation);
+    }
+    
+    public void addOperation(BiConsumer<ExcelDataBlock<?>, List<ExcelCell>> operation) {
+        biOperations.add(operation);
     }
     
     void initInnerCells(Sheet sheet, int rowOffset) {
@@ -64,7 +76,13 @@ public class ExcelCellGroup {
     void executeAllOperations() {
         for (val op : operations) {
             op.accept(phantomCells);
-            phantomCells.forEach(ExcelCell::terminate);
         }
+        for (val op : biOperations) {
+            op.accept(innerDataBlock, phantomCells);
+        }
+    }
+    
+    public void terminateAllCells(Supplier<CellStyle> createCellStyle) {
+        phantomCells.forEach(it -> it.terminate(createCellStyle.get()));
     }
 }

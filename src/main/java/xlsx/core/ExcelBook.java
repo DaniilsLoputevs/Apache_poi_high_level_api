@@ -1,6 +1,8 @@
 package xlsx.core;
 
+import lombok.Cleanup;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -8,6 +10,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import xlsx.utils.Pair;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +23,6 @@ import static org.apache.poi.ss.usermodel.HorizontalAlignment.RIGHT;
  */
 @Getter
 public class ExcelBook {
-    /** for more docs, see {@link Sheet#setColumnWidth} */
-    public static final int ABOUT_STANDARD_WIDTH_EXCEL_CHAR = 256;
     
     Workbook workbook;
     @Deprecated
@@ -33,8 +36,11 @@ public class ExcelBook {
     
     final ExcelBookWriter writer = new ExcelBookWriter();
     final List<ExcelSheet> sheets = new ArrayList<>();
+    final List<ExcelCellStyle> cellStyles = new ArrayList<>();
+    final List<ExcelFont> fonts = new ArrayList<>();
     boolean isTerminated = false;
     
+    @Deprecated
     public ExcelBook() {
         this.workbook = new XSSFWorkbook();
         init();
@@ -46,13 +52,16 @@ public class ExcelBook {
         this.workbook = workbook;
         init();
     }
-    
+    @Deprecated
     private void init() {
         workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
         this.firstWorksheet = workbook.createSheet("sheet 1");
     }
     
     
+    /**
+     * TODO : remove in release!!! Use add(ExcelSheet sheet)
+     */
     @Deprecated
     public ExcelBook add(ExcelDataBlock<?> block) {
         block.setSheet(firstWorksheet);
@@ -66,6 +75,7 @@ public class ExcelBook {
         return this;
     }
     
+    @Deprecated // ?O_O need ot not?
     /** This method is SPECIAL made package private. */
     void setWorkbook(Workbook workbook) {
         this.workbook = workbook;
@@ -80,10 +90,12 @@ public class ExcelBook {
     }
     
     public ExcelCellStyle.ExcelCellStyleBuilder makeStyle() {
-        return ExcelCellStyle.builder()
-                .cellStyleInner(workbook.createCellStyle())
+        val rsl = ExcelCellStyle.builder()
+//                .cellStyleInner(workbook.createCellStyle())
                 .horizontalAlignment(RIGHT)
                 .dataFormatHelper(workbook.getCreationHelper().createDataFormat());
+//        cellStyles.add(rsl);
+        return rsl;
     }
     
     /** @param format - {@link ExcelCellStyle} */
@@ -97,8 +109,27 @@ public class ExcelBook {
     }
     
     
+    /* Terminate operations */
+    
+    
+    @SneakyThrows
+    public void toFile(String filePath) {
+        @Cleanup val output = new FileOutputStream(filePath);
+        writer.writeExcelBookToOutput(this, output);
+    }
+    
+    @SneakyThrows
+    public File toFile(File file) {
+        @Cleanup val output = new FileOutputStream(file);
+        writer.writeExcelBookToOutput(this, output);
+        return file;
+    }
+    
+    @SneakyThrows
     public byte[] toBytes() {
-        return writer.writeExcelBookToBytes(this);
+        @Cleanup val output = new ByteArrayOutputStream();
+        writer.writeExcelBookToOutput(this, output);
+        return output.toByteArray();
     }
     
     public ExcelBook terminate() {
@@ -121,7 +152,7 @@ public class ExcelBook {
 //
 //        return bos.toByteArray();
 //    }
-    
+
 //    private void autoSizeAllColumns(Sheet sheet) {
 //        int lastColumnIndex = 0;
 //        for (val block : blocks) {

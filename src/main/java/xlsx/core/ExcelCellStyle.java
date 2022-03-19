@@ -1,6 +1,7 @@
 package xlsx.core;
 
 import lombok.Builder;
+import lombok.Data;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -25,8 +26,8 @@ import java.util.Date;
  * @author Daniils Loputevs
  */
 @Builder
+@Data
 public class ExcelCellStyle {
-    private final CellStyle cellStyleInner;
     private final DataFormat dataFormatHelper;
     private final String format;
     private final Color foregroundColor;
@@ -45,8 +46,14 @@ public class ExcelCellStyle {
     private final BorderStyle borderLeft;
     private final BorderStyle borderRight;
     
+    CellStyle cellStyleInner;
+    boolean isTerminated;
     
-    public CellStyle terminate() {
+    
+    public CellStyle terminate(CellStyle cellStyleInner) {
+        if (isTerminated) return this.cellStyleInner;
+        else this.cellStyleInner = cellStyleInner;
+        
         if (format != null) cellStyleInner.setDataFormat(dataFormatHelper.getFormat(format));
         if (foregroundColor != null)
             if (cellStyleInner instanceof HSSFCellStyle)
@@ -77,6 +84,7 @@ public class ExcelCellStyle {
         
         if (font != null) cellStyleInner.setFont(font.terminate());
         
+        isTerminated = true;
         return cellStyleInner;
     }
     

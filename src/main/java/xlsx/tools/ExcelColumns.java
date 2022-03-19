@@ -15,15 +15,15 @@ public final class ExcelColumns {
     
     /* empty header */
     
-    public static <D> ExcelColumn<D> columnEmptyHeader(Function<D, Object> dataGetter, ExcelCellStyle dataStyle) {
+    public static <D> ExcelColumn<D> columnNoHeader(Function<D, Object> dataGetter, ExcelCellStyle dataStyle) {
         return new ExcelColumn<>("", EMPTY, dataGetter, (__) -> dataStyle);
     }
     
-    public static <D> ExcelColumn<D> columnEmptyHeader(Function<D, Object> dataGetter) {
+    public static <D> ExcelColumn<D> columnNoHeader(Function<D, Object> dataGetter) {
         return new ExcelColumn<>("", EMPTY, dataGetter, (__) -> EMPTY);
     }
     
-    public static <D> ExcelColumn<D> columnEmptyHeader(Function<D, Object> dataGetter, Function<D, ExcelCellStyle> dataStyleFunc) {
+    public static <D> ExcelColumn<D> columnNoHeader(Function<D, Object> dataGetter, Function<D, ExcelCellStyle> dataStyleFunc) {
         return new ExcelColumn<>("", EMPTY, dataGetter, dataStyleFunc);
     }
     

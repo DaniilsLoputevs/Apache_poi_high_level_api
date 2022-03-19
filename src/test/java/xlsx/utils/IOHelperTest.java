@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Deprecated
 public class IOHelperTest {
     private static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd__HH-mm");
     

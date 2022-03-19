@@ -17,10 +17,6 @@ import java.util.GregorianCalendar;
  */
 public class DateUtil {
     
-    public static boolean isInTimeRange(LocalDateTime timePoint, LocalDateTime earliestTimeRange, LocalDateTime latestTimeRange) {
-        return timePoint.isAfter(earliestTimeRange) && timePoint.isBefore(latestTimeRange);
-    }
-    
     // для большего перевода одних блин дат в другие блин даты: https://www.logicbig.com/how-to/java-8-date-time-api/to-date-conversion.html
     
     public static Calendar toCalendar(LocalDateTime localDateTime) {

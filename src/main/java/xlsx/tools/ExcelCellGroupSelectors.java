@@ -5,6 +5,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import xlsx.core.*;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -25,9 +26,9 @@ public final class ExcelCellGroupSelectors {
             }
         };
     }
-    
-    public static Consumer<List<ExcelCell>> mergeCellGroupAndSetValueAndStyle(String value, ExcelCellStyle style, ExcelBook book) {
-        return (List<ExcelCell> cells) -> {
+
+    public static BiConsumer<ExcelDataBlock<?>, List<ExcelCell>> mergeCellGroupAndSetValueAndStyle(String value, ExcelCellStyle style, ExcelBook book) {
+        return (dataBlock, cells) -> {
             if (cells.size() == 1) throw new IllegalStateException("try to merge 1 cell, not many cells");
             int rowStartIndex = Integer.MAX_VALUE, rowEndIndex = 0, colStartIndex = Integer.MAX_VALUE, colEndIndex = 0;
             for (val cell : cells) {
@@ -39,7 +40,7 @@ public final class ExcelCellGroupSelectors {
                 colStartIndex = Math.min(colStartIndex, cell.getColIndex());
                 colEndIndex = Math.max(colEndIndex, cell.getColIndex());
             }
-            book.getFirstWorksheet().addMergedRegion(new CellRangeAddress(rowStartIndex, rowEndIndex, colStartIndex, colEndIndex));
+            dataBlock.getSheet().addMergedRegion(new CellRangeAddress(rowStartIndex, rowEndIndex, colStartIndex, colEndIndex));
         };
     }
 }

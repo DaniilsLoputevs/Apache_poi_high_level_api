@@ -2,9 +2,7 @@ package xlsx.core;
 
 import xlsx.utils.Pair;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ExcelSheetConfig {
@@ -15,6 +13,7 @@ public class ExcelSheetConfig {
         columnsIndexAndWidth.put(colWidth.getFirst(), colWidth.getSecond());
         return this;
     }
+    
     public ExcelSheetConfig set(String sheetName) {
         this.sheetName = sheetName;
         return this;

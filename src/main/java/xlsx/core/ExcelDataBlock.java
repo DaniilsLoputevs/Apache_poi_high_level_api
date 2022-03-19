@@ -25,7 +25,7 @@ public class ExcelDataBlock<D> {
     
     private final CompletableFuture<Iterable<D>> dataFuture;
     final Map<ExcelCellGroupType, ExcelCellGroupSelector> allGroups = new HashMap<>();
-    private Iterable<D> data;
+    
     @Getter
     @Setter
     private Sheet sheet;
@@ -40,6 +40,7 @@ public class ExcelDataBlock<D> {
     }
     
     public ExcelDataBlock<D> add(ExcelCellGroupSelector selector) {
+        selector.innerDataBlock = this;
         selector.collectCells();
         allGroups.put(selector.getType(), selector);
         return this;
@@ -61,39 +62,39 @@ public class ExcelDataBlock<D> {
         return dataFuture.get();
     }
     
-    @SneakyThrows
-    public void writeToWorkBookSheet(Sheet sheet) {
-        // if this dataBlock isn't first, we skip 1 empty line
-        int rowIndex = (sheet.getLastRowNum() == -1) ? 0 : sheet.getLastRowNum() + 2;
-        
-        rowIndex = setBlockHeader(sheet, rowIndex);
-        
-        for (val currentRowData : dataFuture.get()) {
-            val currentRow = sheet.createRow(rowIndex++);
-            int cellIndex = 0;
-            for (val column : columns) {
-                createCellAndSetValue(currentRow, cellIndex++,
-                        column.getDataGetter().apply(currentRowData),
-                        column.getDataStyle().apply(currentRowData).terminate());
-            }
-        }
-    }
-    
-    private int setBlockHeader(Sheet sheet, int rowOffset) {
-        if (allGroups.containsKey(HEADER)) {
-            val headerGroup = allGroups.get(HEADER);
-            rowOffset = headerGroup.initInnerCells(sheet, rowOffset);
-            rowOffset++;
-            
-        } else {
-            val headerRow = sheet.createRow(rowOffset++);
-            int cellIndex = 0;
-            for (val col : columns) {
-                createCellAndSetValue(headerRow, cellIndex++, col.getHeaderValue(), col.getHeaderStyle().terminate());
-            }
-        }
-        return rowOffset;
-    }
+//    @SneakyThrows
+//    public void writeToWorkBookSheet(Sheet sheet) {
+//        // if this dataBlock isn't first, we skip 1 empty line
+//        int rowIndex = (sheet.getLastRowNum() == -1) ? 0 : sheet.getLastRowNum() + 2;
+//
+//        rowIndex = setBlockHeader(sheet, rowIndex);
+//
+//        for (val currentRowData : dataFuture.get()) {
+//            val currentRow = sheet.createRow(rowIndex++);
+//            int cellIndex = 0;
+//            for (val column : columns) {
+//                createCellAndSetValue(currentRow, cellIndex++,
+//                        column.getDataGetter().apply(currentRowData),
+//                        column.getDataStyle().apply(currentRowData).terminate());
+//            }
+//        }
+//    }
+//
+//    private int setBlockHeader(Sheet sheet, int rowOffset) {
+//        if (allGroups.containsKey(HEADER)) {
+//            val headerGroup = allGroups.get(HEADER);
+//            rowOffset = headerGroup.initInnerCells(sheet, rowOffset);
+//            rowOffset++;
+//
+//        } else {
+//            val headerRow = sheet.createRow(rowOffset++);
+//            int cellIndex = 0;
+//            for (val col : columns) {
+//                createCellAndSetValue(headerRow, cellIndex++, col.getHeaderValue(), col.getHeaderStyle().terminate());
+//            }
+//        }
+//        return rowOffset;
+//    }
     
     private void createCellAndSetValue(Row row, int cellIndex, Object cellValue, CellStyle cellStyle) {
         val cell = row.getCell(cellIndex);

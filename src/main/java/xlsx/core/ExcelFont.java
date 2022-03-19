@@ -17,13 +17,17 @@ public class ExcelFont {
     private final IndexedColors color;
     
     private final Font innerFont;
+    boolean isTerminated;
     
     public Font terminate() {
+        if (isTerminated) return this.innerFont;
+        
         innerFont.setBold(bold);
         if (height != null) innerFont.setFontHeightInPoints(height.shortValue());
         if (fontName != null) innerFont.setFontName(fontName);
         if (color != null) innerFont.setColor(color.index);
         
+        isTerminated = true;
         return innerFont;
     }
     
