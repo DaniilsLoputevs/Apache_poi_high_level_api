@@ -42,7 +42,7 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
     
     @SneakyThrows
     public void writeExcelBookToOutput(ExcelBook book, OutputStream output) {
-        if (book.isTerminated) book.workbook.write(output);
+        if (book.isTerminated()) book.workbook.write(output);
         else this.terminateExcelBook(book).workbook.write(output);
     }
     
@@ -70,7 +70,7 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
                 }
             }
         }
-        book.isTerminated = true;
+        book.isTerminated( true);
         return book;
     }
     

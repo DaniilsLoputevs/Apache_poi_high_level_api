@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import static java.awt.Color.*;
 import static org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND;
 import static org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER;
+import static xlsx.core.ExcelBook.defaultBook;
 import static xlsx.core.ExcelBookWriter.BLANK_SPACE_OFFSET;
 import static xlsx.core.ExcelCellGroupType.HEADER;
 import static xlsx.tools.ExcelBlocks.block;
@@ -127,18 +128,18 @@ public class Examples {
     @Test
     public void easy() {
         TimeMarker.addMark("Start xlsx");
-        val book = new ExcelBook();
+        val book = defaultBook();
         val headerStyle = book.makeStyle().foregroundColor(YELLOW).fillPattern(SOLID_FOREGROUND).build();
         val dateStyle = book.makeStyle("dd.MM.yy HH:mm").build();
         
-        book.add(block(users, headerStyle)
-                .add(column("ID", User::getId, buildIdStyle(book)))
-                .add(column("Name", User::getName))
-                .add(column("Role", User::getRole))
-                .add(column("Register Date", User::getRegisterDate, dateStyle))
-                .add(column("Active", User::isActive))
-                .add(column("Balance", User::getBalance, buildCurrencyStyle(book)))
-        ).toFile(SIMPLE_OUTPUT_PATH);
+//        book.add(block(users, headerStyle)
+//                .add(column("ID", User::getId, buildIdStyle(book)))
+//                .add(column("Name", User::getName))
+//                .add(column("Role", User::getRole))
+//                .add(column("Register Date", User::getRegisterDate, dateStyle))
+//                .add(column("Active", User::isActive))
+//                .add(column("Balance", User::getBalance, buildCurrencyStyle(book)))
+//        ).toFile(SIMPLE_OUTPUT_PATH);
         
         TimeMarker.addMark("Finish xlsx");
         TimeMarker.printMarks();
@@ -147,7 +148,7 @@ public class Examples {
     // TODO : BROKEN output file
     @Test
     public void complex() {
-        val book = new ExcelBook();
+        val book = defaultBook();
         val headerStyle = book.makeStyle()
                 .foregroundColor(ORANGE).fillPattern(SOLID_FOREGROUND).allSideAlignment(CENTER)
                 .font(book.makeFont().fontName("Arial").bold(true).height(12).build())
@@ -156,25 +157,25 @@ public class Examples {
         val idStyle = buildIdStyle(book);
         val amountStyle = buildCurrencyStyle(book);
         
-        book.add(block(users)
-                        .add(columnNoHeader(User::getId, idStyle))
-                        .add(columnNoHeader(User::getName))
-                        .add(columnNoHeader(User::getRole))
-                        .add(columnNoHeader(User::getRegisterDate, dateStyle))
-                        .add(columnNoHeader(User::isActive))
-                        .add(columnNoHeader(User::getBalance, amountStyle))
-                        .add(cellGroupSelector(HEADER, ""
-                                        + "h h h h h h \r\n"
-                                        + "1 2 3 4 5 6 \r\n")
-//                        .add("h", mergeCellGroupAndSetValueAndStyle("All users report", headerStyle, book))
-                                        .add("1", setValueAndHeaderForGroup("ID", headerStyle))
-                                        .add("2", setValueAndHeaderForGroup("Name", headerStyle))
-                                        .add("3", setValueAndHeaderForGroup("Role", headerStyle))
-                                        .add("4", setValueAndHeaderForGroup("Register Date", headerStyle))
-                                        .add("5", setValueAndHeaderForGroup("Active", headerStyle))
-                                        .add("6", setValueAndHeaderForGroup("Balance", headerStyle))
-                        )
-        ).toFile(COMPLEX_OUTPUT_PATH);
+//        book.add(block(users)
+//                        .add(columnNoHeader(User::getId, idStyle))
+//                        .add(columnNoHeader(User::getName))
+//                        .add(columnNoHeader(User::getRole))
+//                        .add(columnNoHeader(User::getRegisterDate, dateStyle))
+//                        .add(columnNoHeader(User::isActive))
+//                        .add(columnNoHeader(User::getBalance, amountStyle))
+//                        .add(cellGroupSelector(HEADER, ""
+//                                        + "h h h h h h \r\n"
+//                                        + "1 2 3 4 5 6 \r\n")
+////                        .add("h", mergeCellGroupAndSetValueAndStyle("All users report", headerStyle, book))
+//                                        .add("1", setValueAndHeaderForGroup("ID", headerStyle))
+//                                        .add("2", setValueAndHeaderForGroup("Name", headerStyle))
+//                                        .add("3", setValueAndHeaderForGroup("Role", headerStyle))
+//                                        .add("4", setValueAndHeaderForGroup("Register Date", headerStyle))
+//                                        .add("5", setValueAndHeaderForGroup("Active", headerStyle))
+//                                        .add("6", setValueAndHeaderForGroup("Balance", headerStyle))
+//                        )
+//        ).toFile(COMPLEX_OUTPUT_PATH);
         
         TimeMarker.addMark("Finish xlsx");
         TimeMarker.printMarks();
@@ -207,7 +208,7 @@ public class Examples {
     @Test
     public void easyV1_3() {
         TimeMarker.addMark("Start xlsx");
-        val book = new ExcelBook();
+        val book = defaultBook();
         val subHeaderStyle = book.makeStyle().foregroundColor(GREEN).fillPattern(SOLID_FOREGROUND).build();
         val headerStyle = book.makeStyle().foregroundColor(YELLOW).fillPattern(SOLID_FOREGROUND).allSideAlignment(CENTER).build();
         val dateStyle = book.makeStyle("dd.MM.yy HH:mm").build();

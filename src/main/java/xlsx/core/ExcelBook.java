@@ -18,11 +18,45 @@ import java.util.List;
 
 import static org.apache.poi.ss.usermodel.HorizontalAlignment.RIGHT;
 
+
+public interface ExcelBook {
+    
+    static ExcelBook defaultBook() {
+        return new ExcelBookImpl();
+    }
+    
+    ExcelBook add(ExcelSheet sheet);
+    
+    ExcelCellStyle.ExcelCellStyleBuilder makeStyle();
+    
+    /** @param format - {@link ExcelCellStyle} */
+    ExcelCellStyle.ExcelCellStyleBuilder makeStyle(String format);
+    
+    ExcelFont.ExcelFontBuilder makeFont();
+    
+    
+    /* Terminate operations */
+    
+    
+    void toFile(String filePath);
+    
+    File toFile(File file);
+    
+    byte[] toBytes();
+    
+    ExcelBook terminate();
+    
+    List<ExcelSheet> getSheets();
+    boolean terminated();
+    boolean isTerminated(boolean value);
+    
+}
+
 /**
  * @author Daniils Loputevs
  */
 @Getter
-public class ExcelBook {
+class ExcelBookImpl implements ExcelBook {
     
     Workbook workbook;
     @Deprecated
@@ -40,17 +74,18 @@ public class ExcelBook {
     boolean isTerminated = false;
     
     @Deprecated
-    public ExcelBook() {
+    public ExcelBookImpl() {
         this.workbook = new XSSFWorkbook();
         init();
     }
     
     @Deprecated
     // TODO : быстрое решение, хотелось бы, сделать по лучше, чем такой полу-костыль.
-    public ExcelBook(Workbook workbook) {
+    public ExcelBookImpl(Workbook workbook) {
         this.workbook = workbook;
         init();
     }
+    
     @Deprecated
     private void init() {
         workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -68,13 +103,15 @@ public class ExcelBook {
         return this;
     }
     
+    @Override
     public ExcelBook add(ExcelSheet sheet) {
         sheet.name = "sheet " + sheets.size() + 1;
         sheets.add(sheet);
         return this;
     }
     
-    @Deprecated // ?O_O need ot not?
+    @Deprecated
+    // ?O_O need ot not?
     /** This method is SPECIAL made package private. */
     void setWorkbook(Workbook workbook) {
         this.workbook = workbook;
@@ -88,6 +125,7 @@ public class ExcelBook {
         return this;
     }
     
+    @Override
     public ExcelCellStyle.ExcelCellStyleBuilder makeStyle() {
         val rsl = ExcelCellStyle.builder()
 //                .cellStyleInner(workbook.createCellStyle())
@@ -98,11 +136,13 @@ public class ExcelBook {
     }
     
     /** @param format - {@link ExcelCellStyle} */
+    @Override
     public ExcelCellStyle.ExcelCellStyleBuilder makeStyle(String format) {
         return makeStyle().format(format);
     }
     
     
+    @Override
     public ExcelFont.ExcelFontBuilder makeFont() {
         return ExcelFont.builder().innerFont(workbook.createFont());
     }
@@ -112,12 +152,14 @@ public class ExcelBook {
     
     
     @SneakyThrows
+    @Override
     public void toFile(String filePath) {
         @Cleanup val output = new FileOutputStream(filePath);
         writer.writeExcelBookToOutput(this, output);
     }
     
     @SneakyThrows
+    @Override
     public File toFile(File file) {
         @Cleanup val output = new FileOutputStream(file);
         writer.writeExcelBookToOutput(this, output);
@@ -125,12 +167,14 @@ public class ExcelBook {
     }
     
     @SneakyThrows
+    @Override
     public byte[] toBytes() {
         @Cleanup val output = new ByteArrayOutputStream();
         writer.writeExcelBookToOutput(this, output);
         return output.toByteArray();
     }
     
+    @Override
     public ExcelBook terminate() {
         return writer.terminateExcelBook(this);
     }
