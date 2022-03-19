@@ -23,14 +23,19 @@ import java.util.function.Supplier;
 import static xlsx.core.ExcelCellGroupType.HEADER;
 import static xlsx.utils.DateUtil.toCalendar;
 
-/**
- * Terminate whole Excel book to bytes.
- */
-@Setter
-public class ExcelBookWriter {
+/** Terminate whole Excel book to bytes. */
+public interface ExcelBookWriter {
     /** for more docs, see {@link Sheet#setColumnWidth} */
-    public static final int ABOUT_STANDARD_WIDTH_EXCEL_CHAR = 256;
-    public static final int BLANK_SPACE_OFFSET = 3;
+    int ABOUT_STANDARD_WIDTH_EXCEL_CHAR = 256;
+    int BLANK_SPACE_OFFSET = 3;
+    
+    void writeExcelBookToOutput(ExcelBook book, OutputStream output);
+    
+    ExcelBook terminateExcelBook(ExcelBook book);
+}
+
+@Setter
+class ExcelBookWriterImpl implements ExcelBookWriter{
     
     // todo - make normal value
     private int cellCountToUseSXSSF = 2_0000;
@@ -57,7 +62,7 @@ public class ExcelBookWriter {
             for (int columnIndex = 0; columnIndex < sheet.maxColumnsCount; columnIndex++) {
                 /* set Const width || autosize */
                 // todo - optimize for all cases : remove default autosize
-                val constColumnWidth = sheet.config.columnsIndexAndWidth.get(columnIndex);
+                val constColumnWidth = sheet.columnsIndexAndWidth.get(columnIndex);
                 if (constColumnWidth != null) innerSheet.setColumnWidth(columnIndex, constColumnWidth);
                 else {
                     if (!useSXSSF) innerSheet.autoSizeColumn(columnIndex);

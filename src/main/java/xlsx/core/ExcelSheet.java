@@ -2,15 +2,21 @@ package xlsx.core;
 
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.Sheet;
+import xlsx.utils.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class ExcelSheet {
     String name;
     final List<ExcelDataBlock<?>> dataBlocks = new ArrayList<>();
-    ExcelSheetConfig config;
+    
+    final Map<Integer, Integer> columnsIndexAndWidth = new HashMap<>();
+    String sheetName;
+    
     Sheet innerWorksheet;
     int maxColumnsCount;
     int totalRowsCount;
@@ -19,9 +25,8 @@ public class ExcelSheet {
         dataBlocks.add(block);
         return this;
     }
-    
-    public ExcelSheet set(ExcelSheetConfig config) {
-        this.config = config;
+    public ExcelSheet add(Pair<Integer, Integer> colWidth) {
+        columnsIndexAndWidth.put(colWidth.getFirst(), colWidth.getSecond());
         return this;
     }
 }

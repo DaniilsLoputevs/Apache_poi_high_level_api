@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import static java.awt.Color.*;
 import static org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND;
 import static org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER;
+import static xlsx.core.ExcelBookWriter.BLANK_SPACE_OFFSET;
 import static xlsx.core.ExcelCellGroupType.HEADER;
 import static xlsx.tools.ExcelBlocks.block;
 import static xlsx.tools.ExcelCellGroupSelectors.*;
@@ -22,7 +23,6 @@ import static xlsx.tools.ExcelCellStyles.buildCurrencyStyle;
 import static xlsx.tools.ExcelCellStyles.buildIdStyle;
 import static xlsx.tools.ExcelColumns.column;
 import static xlsx.tools.ExcelColumns.columnNoHeader;
-import static xlsx.tools.ExcelSheetConfigs.config;
 import static xlsx.tools.ExcelSheets.sheet;
 
 /**
@@ -54,14 +54,15 @@ import static xlsx.tools.ExcelSheets.sheet;
  * TODO : 8 - remove builder for ExcelCellStyle & ExcelFont + add to book them Make it. - DENIED OOOOOOOOOOOOOOOOOOOOOOO
  * TODO : 9 - terminate operation: toFile(String || File) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  * TODO : 10 - (refactoring bug) создание workbook - потеряна настройка MISSING POLICY ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- * TODO : 11 - ExcelBookWriter make interface? Why not?
- * TODO : 12 - ExcelSheetConfig.sheetName || ExcelSheet.name ???
+ * TODO : 11 - ExcelBookWriter make interface? Why not? ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * TODO : 12 - ExcelSheetConfig.sheetName || ExcelSheet.name ??? ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  * TODO : 13 - CellStyle noStyle -> DEFAULT || EMPTY ???
  * TODO : 14 - dataBlock from CompletableFuture ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  * TODO : 15 - fix GroupSelector && merge region broken  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  * TODO : 16 - fix GroupSelector && merge region not use styles at not first cell ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  * TODO : 17 - make new Standard styles
- * TODO : 18 -
+ * TODO : 18 - renew examples tests
+ * TODO : 19 -
  * TODO : NN - clean from @Deprecated API
  * TODO :
  *
@@ -230,14 +231,14 @@ public class Examples {
                                 .add("5", setValueAndHeaderForGroup("Active", subHeaderStyle))
                                 .add("6", setValueAndHeaderForGroup("Balance", subHeaderStyle))
                         )
-        ).set(config()
+        )
 //                .add(columnWidth(0, 2 + BLANK_SPACE_OFFSET))
 //                .add(columnWidth(1, 4 + BLANK_SPACE_OFFSET))
 //                .add(columnWidth(2, 5 + BLANK_SPACE_OFFSET))
 //                .add(columnWidth(3, 14 + BLANK_SPACE_OFFSET))
 //                .add(columnWidth(4, 6 + BLANK_SPACE_OFFSET))
 //                .add(columnWidth(5, 22 + BLANK_SPACE_OFFSET))
-        )).toFile(DEV_OUTPUT_PATH);
+        ).toFile(DEV_OUTPUT_PATH);
         
         TimeMarker.addMark("Finish xlsx");
         TimeMarker.printMarks();

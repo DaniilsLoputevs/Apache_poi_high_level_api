@@ -30,11 +30,10 @@ public class ExcelBook {
     @Getter
     @Deprecated
     private Sheet firstWorksheet;
-    //    private final Sheet firstWorksheet = workbook.createSheet("sheet 1");
     @Deprecated
     private List<Pair<Integer, Integer>> globalColIndexes;
     
-    final ExcelBookWriter writer = new ExcelBookWriter();
+    final ExcelBookWriter writer = new ExcelBookWriterImpl();
     final List<ExcelSheet> sheets = new ArrayList<>();
     final List<ExcelCellStyle> cellStyles = new ArrayList<>();
     final List<ExcelFont> fonts = new ArrayList<>();
@@ -135,32 +134,5 @@ public class ExcelBook {
     public ExcelBook terminate() {
         return writer.terminateExcelBook(this);
     }
-
-//    @Deprecated
-//    @SneakyThrows
-//    public byte[] toBytes() {
-//        blocks.forEach(block -> block.writeToWorkBookSheet(firstWorksheet));
-//
-//        // todo - do normal way
-////        autoSizeAllColumns(firstWorksheet);
-////
-////        if (globalColIndexes != null)
-////            globalColIndexes.forEach(pair -> firstWorksheet.setColumnWidth(pair.getFirst(), pair.getSecond()));
-//
-//        @Cleanup val bos = new ByteArrayOutputStream();
-//        workbook.write(bos);
-//
-//        return bos.toByteArray();
-//    }
-
-//    private void autoSizeAllColumns(Sheet sheet) {
-//        int lastColumnIndex = 0;
-//        for (val block : blocks) {
-//            lastColumnIndex = Math.max(lastColumnIndex, block.getColumns().size());
-//        }
-//        for (int columnIndex = 0; columnIndex < lastColumnIndex; columnIndex++) {
-//            sheet.autoSizeColumn(columnIndex);
-//        }
-//    }
     
 }
