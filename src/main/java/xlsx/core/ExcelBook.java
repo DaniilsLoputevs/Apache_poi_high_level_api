@@ -35,7 +35,6 @@ public interface ExcelBook {
     ExcelFont.ExcelFontBuilder makeFont();
     
     
-    /* Terminate operations */
     
     
     void toFile(String filePath);
@@ -46,8 +45,18 @@ public interface ExcelBook {
     
     ExcelBook terminate();
     
+    
+    /* getters && setters */
+    
+    
     List<ExcelSheet> getSheets();
-    boolean terminated();
+    
+    Workbook getBook();
+    
+    Workbook setBook(Workbook workbook);
+    
+    boolean isTerminated();
+    
     boolean isTerminated(boolean value);
     
 }
@@ -179,4 +188,31 @@ class ExcelBookImpl implements ExcelBook {
         return writer.terminateExcelBook(this);
     }
     
+    /* getters && setters */
+    
+    
+    @Override
+    public Workbook getBook() {
+        return workbook;
+    }
+    
+    
+    @Override
+    public Workbook setBook(Workbook workbook) {
+        this.workbook = workbook;
+        return workbook;
+    }
+    
+    
+    @Override
+    public boolean isTerminated() {
+        return isTerminated;
+    }
+    
+    
+    @Override
+    public boolean isTerminated(boolean value) {
+        this.isTerminated = value;
+        return value;
+    }
 }

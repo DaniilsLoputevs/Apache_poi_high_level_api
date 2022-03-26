@@ -42,22 +42,22 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
     
     @SneakyThrows
     public void writeExcelBookToOutput(ExcelBook book, OutputStream output) {
-        if (book.isTerminated()) book.workbook.write(output);
-        else this.terminateExcelBook(book).workbook.write(output);
+        if (book.isTerminated()) book.getBook().write(output);
+        else this.terminateExcelBook(book).getBook().write(output);
     }
     
     public ExcelBook terminateExcelBook(ExcelBook book) {
         val useSXSSF = bookTotalCellCount(book) >= cellCountToUseSXSSF;
-        book.workbook = useSXSSF ? new SXSSFWorkbook() : new XSSFWorkbook();
-        book.workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+        val innerBook = book.setBook( useSXSSF ? new SXSSFWorkbook() : new XSSFWorkbook());
+        innerBook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
         
-        for (val sheet : book.sheets) {
+        for (val sheet : book.getSheets()) {
             val columnsMaxCharCount = new HashMap<Integer, Integer>();
-            sheet.innerWorksheet = book.getWorkbook().createSheet(sheet.name);
+            sheet.innerWorksheet = innerBook.createSheet(sheet.name);
             val innerSheet = sheet.innerWorksheet;
             
             sheet.getDataBlocks().forEach(it ->
-                    dataBlockWrite(it, innerSheet, columnsMaxCharCount, book.workbook::createCellStyle));
+                    dataBlockWrite(it, innerSheet, columnsMaxCharCount, innerBook::createCellStyle));
             
             for (int columnIndex = 0; columnIndex < sheet.maxColumnsCount; columnIndex++) {
                 /* set Const width || autosize */
