@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 @Getter
 @RequiredArgsConstructor
 public class ExcelCell {
+    boolean isTerminated;
     private int rowIndex;
     private int colIndex;
     /**
@@ -22,12 +23,9 @@ public class ExcelCell {
      * Когда будет потребность в других типах будет поддержка других типов.
      */
     private Object value;
-    
     @Getter
     private Cell innerCell;
     private ExcelCellStyle style;
-    
-    boolean isTerminated;
     
     public ExcelCell(int rowIndex, int colIndex) {
         this.rowIndex = rowIndex;

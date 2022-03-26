@@ -11,10 +11,9 @@ import java.util.Map;
 
 @Getter
 public class ExcelSheet {
-    String name;
     final List<ExcelDataBlock<?>> dataBlocks = new ArrayList<>();
-    
     final Map<Integer, Integer> columnsIndexAndWidth = new HashMap<>();
+    String name;
     String sheetName;
     
     Sheet innerWorksheet;
@@ -25,6 +24,7 @@ public class ExcelSheet {
         dataBlocks.add(block);
         return this;
     }
+    
     public ExcelSheet add(Pair<Integer, Integer> colWidth) {
         columnsIndexAndWidth.put(colWidth.getFirst(), colWidth.getSecond());
         return this;

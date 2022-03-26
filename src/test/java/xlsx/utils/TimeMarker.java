@@ -1,26 +1,24 @@
 package xlsx.utils;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
 public class TimeMarker {
     private static final List<TimeMark> marks = new ArrayList<>();
-
+    
     public static void addMark(String name) {
         marks.add(new TimeMark(name, System.nanoTime()));
     }
-
+    
     public static void printMarks() {
         printMarks(TimeUnit.MILLISECONDS);
     }
-
+    
     public static void printMarks(TimeUnit timeUnit) {
         val rsl = new StringJoiner(System.lineSeparator())
                 .add("TimeMark: -Name-  -time from last mark-  -display units-");
@@ -45,43 +43,43 @@ public class TimeMarker {
         }
         System.out.println(rsl);
     }
-
-
+    
+    
     @RequiredArgsConstructor
     private static class TimeMark {
         private final String name;
         private final long timeNano;
     }
 
-    private static final int DATA_COUNT = 20_000_000;
-
-    public static void main(String[] args) {
-        TimeMarker.addMark("Stat one");
-
-        val listOne = new ArrayList<String>();
-        for (int i = 0; i < DATA_COUNT; i++) {
-            listOne.add("a");
-        }
-        TimeMarker.addMark("Finish one");
-
-        TimeMarker.addMark("Stat two");
-        val listTwo = new ArrayList<String>();
-        for (int i = 0; i < DATA_COUNT; i++) {
-            listTwo.add("a");
-        }
-        TimeMarker.addMark("Finish two");
-
-        TimeMarker.addMark("Stat listLinked");
-        val listLinked = new LinkedList<String>();
-        for (int i = 0; i < DATA_COUNT; i++) {
-            listLinked.add("a");
-        }
-        TimeMarker.addMark("Finish listLinked");
-
-
-        System.out.println(listOne.size());
-        System.out.println(listTwo.size());
-        System.out.println(listLinked.size());
-        TimeMarker.printMarks();
-    }
+//    private static final int DATA_COUNT = 20_000_000;
+//
+//    public static void main(String[] args) {
+//        TimeMarker.addMark("Stat one");
+//
+//        val listOne = new ArrayList<String>();
+//        for (int i = 0; i < DATA_COUNT; i++) {
+//            listOne.add("a");
+//        }
+//        TimeMarker.addMark("Finish one");
+//
+//        TimeMarker.addMark("Stat two");
+//        val listTwo = new ArrayList<String>();
+//        for (int i = 0; i < DATA_COUNT; i++) {
+//            listTwo.add("a");
+//        }
+//        TimeMarker.addMark("Finish two");
+//
+//        TimeMarker.addMark("Stat listLinked");
+//        val listLinked = new LinkedList<String>();
+//        for (int i = 0; i < DATA_COUNT; i++) {
+//            listLinked.add("a");
+//        }
+//        TimeMarker.addMark("Finish listLinked");
+//
+//
+//        System.out.println(listOne.size());
+//        System.out.println(listTwo.size());
+//        System.out.println(listLinked.size());
+//        TimeMarker.printMarks();
+//    }
 }

@@ -15,7 +15,7 @@ public final class ExcelSheets {
     // todo - check doc link
     /**
      * If the appearance of the report is important to you, choose the width for your font.
-     * You can set the width in excel pixels using method below {@link ExcelSheet#columnWidthPixel(int, int)}.
+     * You can set the width in excel pixels using method below {@link ExcelSheets#columnWidthPixel(int, int)}.
      * See more info about column width in {@link Sheet#setColumnWidth}
      *
      * @param colIndex     -

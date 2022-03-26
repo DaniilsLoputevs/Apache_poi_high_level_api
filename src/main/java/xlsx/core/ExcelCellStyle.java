@@ -28,7 +28,6 @@ import java.util.Date;
 @Builder
 @Data
 public class ExcelCellStyle {
-    private final DataFormat dataFormatHelper;
     private final String format;
     private final Color foregroundColor;
     private final IndexedColors foregroundColorIndex;
@@ -45,10 +44,9 @@ public class ExcelCellStyle {
     private final BorderStyle borderBottom;
     private final BorderStyle borderLeft;
     private final BorderStyle borderRight;
-    
     CellStyle cellStyleInner;
     boolean isTerminated;
-    
+    private DataFormat dataFormatHelper;
     
     public CellStyle terminate(CellStyle cellStyleInner) {
         if (isTerminated) return this.cellStyleInner;

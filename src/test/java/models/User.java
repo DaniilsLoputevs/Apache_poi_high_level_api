@@ -1,8 +1,8 @@
 package models;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,4 +18,7 @@ public class User {
     private boolean active;
     private BigDecimal balance;
     
+    public enum Role {
+        USER, ADMIN
+    }
 }

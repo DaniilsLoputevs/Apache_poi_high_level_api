@@ -2,14 +2,12 @@ package xlsx.core;
 
 import lombok.Data;
 import lombok.val;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * @author Daniils Loputevs
@@ -28,11 +26,9 @@ public class ExcelCellGroup {
     /** operations that will be invoked then phantomCells will receive real value for innerCell. */
     private final List<Consumer<List<ExcelCell>>> operations = new ArrayList<>();
     private final List<BiConsumer<ExcelDataBlock<?>, List<ExcelCell>>> biOperations = new ArrayList<>();
-    
-    
+    ExcelDataBlock<?> innerDataBlock;
     private int lastRowIndex;
     private int lastColIndex;
-    ExcelDataBlock<?> innerDataBlock;
     
     public ExcelCellGroup(String groupName) {
         this.groupName = groupName;
@@ -82,7 +78,4 @@ public class ExcelCellGroup {
         }
     }
     
-    public void terminateAllCells(Supplier<CellStyle> createCellStyle) {
-        phantomCells.forEach(it -> it.terminate(createCellStyle.get()));
-    }
 }

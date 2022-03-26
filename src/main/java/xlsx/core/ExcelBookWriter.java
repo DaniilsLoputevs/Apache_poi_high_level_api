@@ -5,9 +5,9 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -18,7 +18,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static xlsx.core.ExcelCellGroupType.HEADER;
 import static xlsx.utils.DateUtil.toCalendar;
@@ -34,11 +33,10 @@ public interface ExcelBookWriter {
     ExcelBook terminateExcelBook(ExcelBook book);
 }
 
-@Setter
-class ExcelBookWriterImpl implements ExcelBookWriter{
+class ExcelBookWriterImpl implements ExcelBookWriter {
     
-    // todo - make normal value
-    private int cellCountToUseSXSSF = 2_0000;
+    @Setter
+    private int cellCountToUseSXSSF = 20_000;
     
     @SneakyThrows
     public void writeExcelBookToOutput(ExcelBook book, OutputStream output) {
@@ -48,7 +46,7 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
     
     public ExcelBook terminateExcelBook(ExcelBook book) {
         val useSXSSF = bookTotalCellCount(book) >= cellCountToUseSXSSF;
-        val innerBook = book.setBook( useSXSSF ? new SXSSFWorkbook() : new XSSFWorkbook());
+        val innerBook = book.setBook(useSXSSF ? new SXSSFWorkbook() : new XSSFWorkbook());
         innerBook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
         
         for (val sheet : book.getSheets()) {
@@ -57,7 +55,7 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
             val innerSheet = sheet.innerWorksheet;
             
             sheet.getDataBlocks().forEach(it ->
-                    dataBlockWrite(it, innerSheet, columnsMaxCharCount, innerBook::createCellStyle));
+                    dataBlockWrite(it, innerSheet, columnsMaxCharCount));
             
             for (int columnIndex = 0; columnIndex < sheet.maxColumnsCount; columnIndex++) {
                 /* set Const width || autosize */
@@ -70,7 +68,7 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
                 }
             }
         }
-        book.isTerminated( true);
+        book.isTerminated(true);
         return book;
     }
     
@@ -100,37 +98,36 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
             maxColumnsCount = Math.max(sheet.maxColumnsCount, maxColumnsCount);
             totalRowsCount += sheet.totalRowsCount;
         }
-        System.out.println("bookTotalCellCount#return = " + maxColumnsCount * totalRowsCount);
+//        System.out.println("bookTotalCellCount#return = " + maxColumnsCount * totalRowsCount);
         return maxColumnsCount * totalRowsCount;
     }
     
     private <T> void dataBlockWrite(ExcelDataBlock<T> dataBlock, Sheet worksheet,
-                                    Map<Integer, Integer> columnsMaxCharCount,
-                                    Supplier<CellStyle> createCellStyle) {
+                                    Map<Integer, Integer> columnsMaxCharCount) {
         dataBlock.setSheet(worksheet);
-        /* if this dataBlock isn't first, we skip 1 empty line */
+        /* if this dataBlock isn't first, we skip 1 line (make empty line) */
         int rowIndex = (worksheet.getLastRowNum() == -1) ? 0 : worksheet.getLastRowNum() + 2;
         
-        rowIndex = dataBlockHeaderWrite(dataBlock, worksheet, rowIndex, columnsMaxCharCount, createCellStyle);
-        dataBlockBodyWrite(dataBlock, worksheet, rowIndex, columnsMaxCharCount, createCellStyle);
+        rowIndex = dataBlockHeaderWrite(dataBlock, worksheet, rowIndex, columnsMaxCharCount);
+        dataBlockBodyWrite(dataBlock, worksheet, rowIndex, columnsMaxCharCount);
     }
     
     private <T> int dataBlockHeaderWrite(ExcelDataBlock<T> dataBlock, Sheet worksheet,
-                                         int rowOffset, Map<Integer, Integer> columnsMaxCharCount,
-                                         Supplier<CellStyle> createCellStyle) {
+                                         int rowOffset, Map<Integer, Integer> columnsMaxCharCount) {
         val headerGroup = dataBlock.allGroups.get(HEADER);
         if (headerGroup != null) {
             /* terminate && write value ti cells */
-            rowOffset = headerGroup.terminateInnerCells(worksheet, rowOffset, createCellStyle);
+            rowOffset = headerGroup.terminateInnerCells(worksheet, rowOffset, worksheet.getWorkbook(), this::terminateStyle);
             rowOffset++;
         } else {
             val headerRow = worksheet.createRow(rowOffset++);
             int cellIndex = 0;
             int columnIndex = 0;
             for (val column : dataBlock.columns) {
-                val headerCellStyle = column.getHeaderStyle();
+                val headerCellStyle = terminateStyle(
+                        column.getHeaderStyle(), worksheet.getWorkbook());
                 val columnMaxCharCount = cellWrite(headerRow, cellIndex++,
-                        column.getHeaderValue(), headerCellStyle, createCellStyle);
+                        column.getHeaderValue(), headerCellStyle);
                 putMaxColumnCharCount(columnsMaxCharCount, columnIndex++, columnMaxCharCount);
             }
         }
@@ -138,27 +135,30 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
     }
     
     private <T> void dataBlockBodyWrite(ExcelDataBlock<T> dataBlock, Sheet worksheet,
-                                        int rowIndex, Map<Integer, Integer> columnsMaxCharCount,
-                                        Supplier<CellStyle> createCellStyle) {
+                                        int rowIndex, Map<Integer, Integer> columnsMaxCharCount) {
         for (val currentRowData : dataBlock.getData()) {
             val currentRow = worksheet.createRow(rowIndex++);
             int cellIndex = 0;
             int columnIndex = 0;
             for (val column : dataBlock.columns) {
-                val dataCellStyle = column.getDataStyle().apply(currentRowData);
+                val dataCellStyle = terminateStyle(
+                        column.getDataStyle().apply(currentRowData), worksheet.getWorkbook());
                 val columnMaxCharCount = cellWrite(currentRow, cellIndex++,
                         column.getDataGetter().apply(currentRowData),
-                        dataCellStyle, createCellStyle);
+                        dataCellStyle);
                 putMaxColumnCharCount(columnsMaxCharCount, columnIndex++, columnMaxCharCount);
             }
         }
     }
     
-    private int cellWrite(Row row, int cellIndex, Object cellValue, ExcelCellStyle excelCellStyle,
-                          Supplier<CellStyle> createCellStyle) {
-        val cellStyle = excelCellStyle.isTerminated
-                ? excelCellStyle.cellStyleInner
-                : excelCellStyle.terminate(createCellStyle.get());
+    private ExcelCellStyle terminateStyle(ExcelCellStyle style, Workbook wb) {
+        if (style.getDataFormatHelper() == null) style.setDataFormatHelper(wb.createDataFormat());
+        if (!style.isTerminated) style.terminate(wb.createCellStyle());
+        return style;
+    }
+    
+    private int cellWrite(Row row, int cellIndex, Object cellValue, ExcelCellStyle excelCellStyle) {
+        
         val cell = row.getCell(cellIndex);
         int cellChars;
         val displayFormat = excelCellStyle.getFormat();
@@ -184,6 +184,7 @@ class ExcelBookWriterImpl implements ExcelBookWriter{
             cellChars = temp.length();
         }
         
+        val cellStyle = excelCellStyle.cellStyleInner;
         if (cellStyle != null) cell.setCellStyle(cellStyle);
         return cellChars;
     }

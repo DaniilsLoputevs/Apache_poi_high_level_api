@@ -3,15 +3,15 @@ package xlsx.core;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * @author Daniils Loputevs
@@ -23,16 +23,14 @@ public class ExcelCellGroupSelector {
     /** key - groupName && val - group */
     private final Map<String, ExcelCellGroup> groups = new LinkedHashMap<>();
     private final String collectPattern;
-    
+    ExcelDataBlock<?> innerDataBlock;
     private int lastRowIndex;
     private int lastColIndex;
-    ExcelDataBlock<?> innerDataBlock;
     
     public ExcelCellGroupSelector add(String groupName, Consumer<List<ExcelCell>> operation) {
         var group = groups.get(groupName);
         if (group == null) {
             group = new ExcelCellGroup(groupName);
-//            group.innerDataBlock = this.innerDataBlock;
             group.addOperation(operation);
             groups.put(groupName, group);
         } else group.addOperation(operation);
@@ -76,15 +74,18 @@ public class ExcelCellGroupSelector {
     
     /* package private */
     
-    int terminateInnerCells(Sheet sheet, int rowOffset, Supplier<CellStyle> createCellStyle) {
+    int terminateInnerCells(Sheet sheet, int rowOffset, Workbook wb,
+                            BiFunction<ExcelCellStyle, Workbook, ExcelCellStyle> styleTerminateFunc) {
         for (val excelCellGroup : groups.values()) {
             excelCellGroup.initInnerCells(sheet, rowOffset);
             lastRowIndex = Math.max(lastRowIndex, excelCellGroup.getLastRowIndex());
             lastColIndex = Math.max(lastColIndex, excelCellGroup.getLastColIndex());
             excelCellGroup.executeAllOperations();
-            excelCellGroup.terminateAllCells(createCellStyle);
+            
+            excelCellGroup.getPhantomCells().forEach(cell -> cell.terminate(styleTerminateFunc.apply(cell.getStyle(), wb).cellStyleInner));
         }
         return lastRowIndex;
     }
+    
     
 }

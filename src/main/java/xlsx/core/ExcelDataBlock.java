@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static xlsx.core.ExcelCellGroupType.HEADER;
 import static xlsx.tools.ExcelCellStyles.DEFAULT;
 import static xlsx.utils.DateUtil.toCalendar;
 
@@ -22,10 +21,8 @@ import static xlsx.utils.DateUtil.toCalendar;
 public class ExcelDataBlock<D> {
     @Getter
     final List<ExcelColumn<D>> columns = new ArrayList<>();
-    
-    private final CompletableFuture<Iterable<D>> dataFuture;
     final Map<ExcelCellGroupType, ExcelCellGroupSelector> allGroups = new HashMap<>();
-    
+    private final CompletableFuture<Iterable<D>> dataFuture;
     @Getter
     @Setter
     private Sheet sheet;
@@ -54,14 +51,14 @@ public class ExcelDataBlock<D> {
      * @return data of block.
      *
      * @throws RuntimeException nested exceptions may be: <br/>
-     * {@link InterruptedException} <br/>
-     * {@link ExecutionException}
+     *                          {@link InterruptedException} <br/>
+     *                          {@link ExecutionException}
      */
     @SneakyThrows
     public Iterable<D> getData() {
         return dataFuture.get();
     }
-    
+
 //    @SneakyThrows
 //    public void writeToWorkBookSheet(Sheet sheet) {
 //        // if this dataBlock isn't first, we skip 1 empty line

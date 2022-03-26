@@ -4,11 +4,7 @@ import lombok.Cleanup;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import xlsx.utils.Pair;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,8 +29,6 @@ public interface ExcelBook {
     ExcelCellStyle.ExcelCellStyleBuilder makeStyle(String format);
     
     ExcelFont.ExcelFontBuilder makeFont();
-    
-    
     
     
     void toFile(String filePath);
@@ -66,51 +60,12 @@ public interface ExcelBook {
  */
 @Getter
 class ExcelBookImpl implements ExcelBook {
-    
-    Workbook workbook;
-    @Deprecated
-    private final List<ExcelDataBlock<?>> blocks = new ArrayList<>();
-    @Getter
-    @Deprecated
-    private Sheet firstWorksheet;
-    @Deprecated
-    private List<Pair<Integer, Integer>> globalColIndexes;
-    
-    final ExcelBookWriter writer = new ExcelBookWriterImpl();
-    final List<ExcelSheet> sheets = new ArrayList<>();
-    final List<ExcelCellStyle> cellStyles = new ArrayList<>();
-    final List<ExcelFont> fonts = new ArrayList<>();
+    private final ExcelBookWriter writer = new ExcelBookWriterImpl();
+    private final List<ExcelSheet> sheets = new ArrayList<>();
+    private final List<ExcelCellStyle> cellStyles = new ArrayList<>();
+    private final List<ExcelFont> fonts = new ArrayList<>();
     boolean isTerminated = false;
-    
-    @Deprecated
-    public ExcelBookImpl() {
-        this.workbook = new XSSFWorkbook();
-        init();
-    }
-    
-    @Deprecated
-    // TODO : быстрое решение, хотелось бы, сделать по лучше, чем такой полу-костыль.
-    public ExcelBookImpl(Workbook workbook) {
-        this.workbook = workbook;
-        init();
-    }
-    
-    @Deprecated
-    private void init() {
-        workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-        this.firstWorksheet = workbook.createSheet("sheet 1");
-    }
-    
-    
-    /**
-     * TODO : remove in release!!! Use add(ExcelSheet sheet)
-     */
-    @Deprecated
-    public ExcelBook add(ExcelDataBlock<?> block) {
-        block.setSheet(firstWorksheet);
-        blocks.add(block);
-        return this;
-    }
+    private Workbook workbook;
     
     @Override
     public ExcelBook add(ExcelSheet sheet) {
@@ -119,29 +74,12 @@ class ExcelBookImpl implements ExcelBook {
         return this;
     }
     
-    @Deprecated
-    // ?O_O need ot not?
-    /** This method is SPECIAL made package private. */
-    void setWorkbook(Workbook workbook) {
-        this.workbook = workbook;
-    }
-    
-    
-    @Deprecated
-    public ExcelBook globalSetColumnWidth(int colIndex, int width) {
-        if (globalColIndexes == null) globalColIndexes = new ArrayList<>();
-        globalColIndexes.add(new Pair<>(colIndex, width));
-        return this;
-    }
-    
     @Override
     public ExcelCellStyle.ExcelCellStyleBuilder makeStyle() {
-        val rsl = ExcelCellStyle.builder()
-//                .cellStyleInner(workbook.createCellStyle())
+        return ExcelCellStyle.builder()
                 .horizontalAlignment(RIGHT)
-                .dataFormatHelper(workbook.getCreationHelper().createDataFormat());
-//        cellStyles.add(rsl);
-        return rsl;
+//                .dataFormatHelper(workbook.getCreationHelper().createDataFormat())
+                ;
     }
     
     /** @param format - {@link ExcelCellStyle} */
@@ -188,6 +126,7 @@ class ExcelBookImpl implements ExcelBook {
         return writer.terminateExcelBook(this);
     }
     
+    
     /* getters && setters */
     
     
@@ -196,19 +135,16 @@ class ExcelBookImpl implements ExcelBook {
         return workbook;
     }
     
-    
     @Override
     public Workbook setBook(Workbook workbook) {
         this.workbook = workbook;
         return workbook;
     }
     
-    
     @Override
     public boolean isTerminated() {
         return isTerminated;
     }
-    
     
     @Override
     public boolean isTerminated(boolean value) {

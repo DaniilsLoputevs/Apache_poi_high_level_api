@@ -10,12 +10,12 @@ import java.util.concurrent.TimeUnit;
 
 public class TimeMarkerOld {
     private static final LinkedHashMap<String, Calendar> times = new LinkedHashMap<>();
-
+    
     public static void setMark(String markName) {
         times.put(markName, new GregorianCalendar());
         DateUtil.print(markName, new GregorianCalendar());
     }
-
+    
     public static void printState() {
         boolean first = true;
         Calendar prevCalendar = null;
@@ -23,12 +23,12 @@ public class TimeMarkerOld {
             if (first) {
                 first = false;
                 DateUtil.print(t.getKey(), t.getValue());
-
+                
             } else {
 //                DateUtils.print(t.getKey(), t.getValue());
-
+                
                 val millis = t.getValue().getTimeInMillis() - prevCalendar.getTimeInMillis();
-
+                
                 val formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 System.out.println(t.getKey() + " : " + formatter.format(t.getValue().getTime())
                         + " time after last mark = " + TimeUnit.MILLISECONDS.toMillis(millis));
@@ -36,6 +36,6 @@ public class TimeMarkerOld {
             prevCalendar = t.getValue();
         }
     }
-
-
+    
+    
 }

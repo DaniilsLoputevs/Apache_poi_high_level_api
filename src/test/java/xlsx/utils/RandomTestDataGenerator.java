@@ -1,7 +1,6 @@
 package xlsx.utils;
 
 import lombok.val;
-import models.Role;
 import models.User;
 
 import java.math.BigDecimal;
@@ -14,15 +13,19 @@ import static xlsx.utils.DateUtil.toLocalDateTime;
 
 public class RandomTestDataGenerator {
     
+    public static int randBetween(int start, int end) {
+        return start + (int) Math.round(Math.random() * (end - start));
+    }
+    
     public Iterable<User> genRandomUsers(int count) {
         val rsl = new ArrayList<User>();
         val random = new Random();
         
         for (int i = 0; i <= count; i++) {
             rsl.add(new User(
-                    (long) i * randBetween(1 , 9),
+                    (long) i * randBetween(1, 9),
                     "name", // TODO : random string
-                    random.nextBoolean() ? Role.USER : Role.ADMIN,
+                    random.nextBoolean() ? User.Role.USER : User.Role.ADMIN,
                     toLocalDateTime(randomCalendar()),
                     random.nextBoolean(),
                     BigDecimal.valueOf(random.nextDouble())
@@ -32,7 +35,6 @@ public class RandomTestDataGenerator {
         
     }
     
-    
     private Calendar randomCalendar() {
         val calendar = new GregorianCalendar();
         int year = randBetween(1900, 2010);
@@ -41,9 +43,5 @@ public class RandomTestDataGenerator {
         calendar.set(calendar.DAY_OF_YEAR, dayOfYear);
 //        System.out.println(calendar.get(calendar.YEAR) + "-" + (calendar.get(calendar.MONTH) + 1) + "-" + calendar.get(calendar.DAY_OF_MONTH));
         return calendar;
-    }
-    
-    public static int randBetween(int start, int end) {
-        return start + (int) Math.round(Math.random() * (end - start));
     }
 }
